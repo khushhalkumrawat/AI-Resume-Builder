@@ -14,6 +14,8 @@ import { Link, useParams } from "react-router-dom";
 import { dummyResumeData } from "../assets/assets";
 import React, { useEffect, useState } from "react";
 import { PersonalInfoForm } from "../components/PersonalInfoForm";
+import ResumePreview from "../components/ResumePreview";
+import TemplateSelector from "../components/TemplateSelector";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -84,16 +86,23 @@ const ResumeBuilder = () => {
                 <div
                   className="absolute top-0 left-0 h-1 bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-500"
                   style={{
-                    width: `${
-                      (activeSectionIndex * 100) /
+                    width: `${(activeSectionIndex * 100) /
                       (sections.length - 1)
-                    }%`,
+                      }%`,
                   }}
                 />
               </div>
 
               {/* Navigation */}
               <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
+
+                {/* Template Change Option */}
+                <div className='flex items-center gap-2 '>
+
+                  <TemplateSelector selectedTemplate={resumeData.template} onChange={(template) => setResumeData(prev => ({ ...prev, template }))} />
+
+                </div>
+
                 <h2 className="font-semibold text-lg">
                   {activeSection.name}
                 </h2>
@@ -122,11 +131,10 @@ const ResumeBuilder = () => {
                     disabled={
                       activeSectionIndex === sections.length - 1
                     }
-                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all ${
-                      activeSectionIndex === sections.length - 1
+                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all ${activeSectionIndex === sections.length - 1
                         ? "opacity-50 cursor-not-allowed"
                         : ""
-                    }`}
+                      }`}
                   >
                     Next
                     <ChevronRight className="size-4" />
@@ -153,18 +161,19 @@ const ResumeBuilder = () => {
             </div>
           </div>
 
-          {/* Right Panel */}
-          <div className="lg:col-span-7">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[700px]">
-              <h2 className="text-xl font-semibold mb-4">
-                Resume Preview
-              </h2>
+          {/* Right Panel - Preview */}
+          <div className='lg:col-span-7 max-lg:mt-6' >
 
-              <p className="text-gray-500">
-                Resume preview will appear here.
-              </p>
+            <div>
+              {/* ---- buttons --- */}
             </div>
+
+            {/* --- resume preview */}
+            <ResumePreview data={resumeData} template={resumeData.template} accentColor={resumeData.accent_color} />
+
           </div>
+
+
         </div>
       </div>
     </div>
