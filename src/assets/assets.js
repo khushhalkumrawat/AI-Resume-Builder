@@ -24,7 +24,7 @@ export const dummyResumeData = [
                 company: "Example Technologies.",
                 position: "Senior Full Stack Developer",
                 start_date: "2023-06",
-                end_date: "Present",
+                end_date: "",
                 description: "Architected, developed, and deployed innovative full-stack applications at Example Technologies.\ncreating robust back-end systems and intuitive front- end interfaces to deliver meaningful digital experiences ",
                 is_current: true,
                 _id: "68d2a31a1c4dd38875bb037f"
@@ -107,7 +107,7 @@ export const dummyResumeData = [
                 company: "TechSpark Inc.",
                 position: "Lead Frontend Engineer",
                 start_date: "2022-02",
-                end_date: "Present",
+                end_date: "",
                 description: "Leading a team of frontend developers to build accessible and scalable user interfaces. Collaborated with UX teams to implement design systems and improve frontend performance.",
                 is_current: true,
                 _id: "78e3b42c2d5ff49286cc1490"
@@ -182,7 +182,7 @@ export const dummyResumeData = [
                 company: "DataNest Solutions",
                 position: "Senior Backend Engineer",
                 start_date: "2021-03",
-                end_date: "Present",
+                end_date: "",
                 description: "Developed distributed microservices using Node.js and Docker. Implemented API rate limiting, authentication, and background job processing using Redis and Bull.",
                 is_current: true,
                 _id: "89f4c53d3e6gg59397dd259h"

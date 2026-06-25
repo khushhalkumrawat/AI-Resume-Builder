@@ -72,7 +72,7 @@ const ClassicTemplate = ({ data, accentColor }) => {
                                         <p className="text-gray-700 font-medium">{exp.company}</p>
                                     </div>
                                     <div className="text-right text-sm text-gray-600">
-                                        <p>{formatDate(exp.start_date)} - {exp.is_current ? "Present" : formatDate(exp.end_date)}</p>
+                                        <p>{formatDate(exp.start_date)} - {exp.is_current ? "" : formatDate(exp.end_date)}</p>
                                     </div>
                                 </div>
                                 {exp.description && (

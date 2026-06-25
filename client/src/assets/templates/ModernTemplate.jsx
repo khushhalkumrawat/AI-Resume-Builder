@@ -74,7 +74,7 @@ const ModernTemplate = ({ data, accentColor }) => {
 											<p className="font-medium" style={{ color: accentColor }}>{exp.company}</p>
 										</div>
 										<div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded">
-											{formatDate(exp.start_date)} - {exp.is_current ? "Present" : formatDate(exp.end_date)}
+											{formatDate(exp.start_date)} - {exp.is_current ? "" : formatDate(exp.end_date)}
 										</div>
 									</div>
 									{exp.description && (
