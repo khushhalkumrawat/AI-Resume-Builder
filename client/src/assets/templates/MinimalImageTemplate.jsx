@@ -135,7 +135,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                                             </h3>
                                             <span className="text-xs text-zinc-500">
                                                 {formatDate(exp.start_date)} -{" "}
-                                                {exp.is_current ? "Present" : formatDate(exp.end_date)}
+                                                {exp.is_current ? "" : formatDate(exp.end_date)}
                                             </span>
                                         </div>
                                         <p className="text-sm mb-2" style={{ color: accentColor }} >
