@@ -2,11 +2,16 @@ import { createRoot } from 'react-dom/client'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import {BrowserRouter} from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
+import { Provider } from 'react-redux'
+import {store} from './app/store.js'
+import { login, setLoading } from "./app/features/authSlice";
 
 createRoot(document.getElementById('root')).render(
    <BrowserRouter>
-      <App />
+      <Provider store={store}>
+         <App />
+      </Provider>
    </BrowserRouter>
 )

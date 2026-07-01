@@ -2,8 +2,15 @@ import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloudIcon, XIco
 import React, { useEffect, useState } from 'react'
 import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import api from '../configs/api'
+import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import pdfToText from 'react-pdftotext'
 
 const Dashboard = () => {
+
+  const { user, token } = useSelector(state => state.auth)
 
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"]
   const [allResumes, setAllResumes] = useState([])
@@ -12,6 +19,9 @@ const Dashboard = () => {
   const [title, setTitle] = useState('')
   const [resume, setResume] = useState(null)
   const [editResumeId, setEditResumeId] = useState('')
+
+  const [isLoading, setIsLoading] = useState(true)
+
   const navigate = useNavigate()
 
   const loadAllResumes = async () => {
@@ -19,15 +29,32 @@ const Dashboard = () => {
   }
 
   const createResume = async (e) => {
-    e.preventDefault()
-    setShowCreateResume(false)
-    navigate('/app/builder/resume-id')
+    try {
+      e.preventDefault()
+      const { data } = await api.post('/api/resumes/create', { title }, { headers: { Authorization: token } })
+      setAllResumes([...allResumes, data.resume])
+      setTitle('')
+      setShowCreateResume(false)
+      navigate(`/app/builder/${data.resume._id}`)
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message)
+    }
   }
 
   const uploadResume = async (e) => {
     e.preventDefault()
-    setShowUploadResume(false)
-    navigate('/app/builder/resume-id')
+    setIsLoading(true)
+    try {
+      const resumeText = await pdfToText(resume)
+      const { data } = await api.post('/api/ai/upload-resume', { title, resumeText }, { headers: { Authorization: token } })
+      setTitle('')
+      setResume(null)
+      setShowUploadResume(false)
+      navigate(`/app/builder/${data.resumeId}`)
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message)
+    }
+    setIsLoading(false)
   }
 
   const editTitle = (e) => {
@@ -45,11 +72,11 @@ const Dashboard = () => {
     setTitle('');
   }
 
-  const deleteResume = async(resumeId) => {
-    
-     const confirm = window.confirm('Are you sure you want to delete this resume?');
+  const deleteResume = async (resumeId) => {
 
-     if (confirm) {
+    const confirm = window.confirm('Are you sure you want to delete this resume?');
+
+    if (confirm) {
       setAllResumes((prevResumes) =>
         prevResumes.filter((resume) => resume._id !== resumeId)
       );
@@ -104,7 +131,7 @@ const Dashboard = () => {
 
                 <div onClick={(e) => e.stopPropagation()} className='absolute top-1 right-1 group-hover:flex items-center hidden'>
 
-                  <TrashIcon onClick = {() => deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors ' />
+                  <TrashIcon onClick={() => deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors ' />
                   <PencilIcon onClick={() => { setEditResumeId(resume._id); setTitle(resume.title) }} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
 
                 </div>
