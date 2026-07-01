@@ -1,7 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux'
 
 const Hero = () => {
+
+    const { user } = useSelector(state => state.auth)
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -59,21 +62,29 @@ const Hero = () => {
                                     <path d="M18 6 6 18" /><path d="m6 6 12 12" />
                                 </svg>
                             </button>
-                            <div className='p-[0.5px] rounded-full bg-linear-to-r from-white to-[#999999]/0'>
-                                <Link
-                                    to='/app?state=login'
-                                    className="hidden md:flex items-center gap-2 bg-[#A6FF5D] text-gray-800 font-medium px-4 py-2.5 rounded-full text-sm transition cursor-pointer group">
-                                    <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.795.605v2.593m1.245-1.296h-2.488M1.845 13.565c.687 0 1.244-.58 1.244-1.296s-.557-1.296-1.244-1.296-1.244.58-1.244 1.296.557 1.296 1.244 1.296M6.209 1.13a.65.65 0 0 1 .214-.379.61.61 0 0 1 .795 0 .66.66 0 0 1 .214.38l.653 3.601c.047.256.166.492.343.676s.403.309.649.357l3.456.681a.62.62 0 0 1 .364.223.665.665 0 0 1 0 .828.62.62 0 0 1-.364.223l-3.456.681a1.23 1.23 0 0 0-.65.358c-.176.184-.295.42-.342.675l-.653 3.602a.65.65 0 0 1-.214.38.61.61 0 0 1-.795 0 .65.65 0 0 1-.214-.38l-.654-3.602a1.3 1.3 0 0 0-.342-.675 1.23 1.23 0 0 0-.649-.358l-3.456-.68a.62.62 0 0 1-.365-.224.665.665 0 0 1 0-.828.62.62 0 0 1 .365-.223l3.456-.68c.246-.05.472-.174.649-.358s.296-.42.342-.676z" stroke="#1e2939" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                    <div className="relative overflow-hidden">
-                                        <span className="block transition-transform duration-200 group-hover:-translate-y-full">
-                                            Login
-                                        </span>
-                                        <span className="absolute top-0 left-0 block transition-transform duration-200 group-hover:translate-y-0 translate-y-full">
-                                            Login
-                                        </span>
-                                    </div>
-                                </Link>
+
+                            <div className="p-[0.5px] rounded-full bg-linear-to-r from-white to-[#999999]/0">
+                                {user ? (
+                                    <Link
+                                        to="/app"
+                                        className="hidden md:block px-8 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        to="/app?state=login"
+                                        className="hidden md:flex items-center gap-2 bg-[#A6FF5D] text-gray-800 font-medium px-4 py-2.5 rounded-full text-sm transition cursor-pointer group"
+                                    >
+                                        <svg width="14" height="15" viewBox="0 0 14 15" fill="none">
+                                            {/* SVG path */}
+                                        </svg>
+
+                                        <span>Login</span>
+                                    </Link>
+                                )}
                             </div>
+
                         </div>
 
                         <button id="open-menu" onClick={() => setMobileOpen(true)}
@@ -103,16 +114,16 @@ const Hero = () => {
                 </p>
 
                 <div className='flex gap-3 mt-8'>
-                    <Link to='/app' className="bg-[#A6FF5D] hover:bg-[#A6FF5D]/90 text-gray-800 px-6 py-2.5 rounded-full text-sm transition cursor-pointer group">
-                        <div className="relative overflow-hidden">
-                            <span className="block transition-transform duration-200 group-hover:-translate-y-full">
-                                Get Started
-                            </span>
-                            <span className="absolute top-0 left-0 block transition-transform duration-200 group-hover:translate-y-0 translate-y-full">
-                                Get Started
-                            </span>
-                        </div>
-                    </Link>
+                    {!user && (
+                        <Link
+                            to="/app?state=register"
+                            className="bg-[#A6FF5D] hover:bg-[#A6FF5D]/90 text-gray-800 px-6 py-2.5 rounded-full text-sm transition cursor-pointer group"
+                        >
+                            <div className="relative overflow-hidden">
+                                <span>Get Started</span>
+                            </div>
+                        </Link>
+                    )}
                     <div className="bg-white/15 hover:bg-white/10 p-px flex items-center justify-center rounded-full hover:scale-105 transition duration-300 active:scale-100">
                         <Link to='/app?state=login' className="px-6 text-sm py-3 text-white rounded-full bg-white/5 cursor-pointer">
                             Try Demo

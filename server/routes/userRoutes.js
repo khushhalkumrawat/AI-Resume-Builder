@@ -5,7 +5,7 @@ import protect from "../middlewares/authMiddleWare.js"
 const userRouter = express.Router();
 
 userRouter.post('/register' , registerUser);
-userRouter.posrt('/login' , loginUser);
+userRouter.post('/login' , loginUser);
 userRouter.get('/data' , protect , getUserById);
 userRouter.get('/resumes' , protect , getUserResumes);
 
