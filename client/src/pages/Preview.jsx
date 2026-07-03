@@ -5,6 +5,12 @@ import { resume } from 'react-dom/server';
 import ResumePreview from '../components/ResumePreview';
 import { ArrowLeftIcon } from 'lucide-react';
 import Loader from '../components/Loader';
+import api from '../configs/api';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Preview = () => {
 
@@ -15,8 +21,14 @@ const Preview = () => {
   const [resumeData, setResumeData] = useState(null)
 
   const loadResume = async () => {
-    setResumeData(dummyResumeData.find(resume => resume._id === resumeId || null))
-    setIsLoading(false)
+    try{ 
+      const {data} = await api.get('/api/resumes/public/' + resumeId)
+      setResumeData(data.resume)
+    }catch(error){
+      console.log(error)
+    }finally{
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
