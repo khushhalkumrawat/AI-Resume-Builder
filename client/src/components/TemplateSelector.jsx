@@ -1,7 +1,6 @@
 import { Layout , Check , FileText } from 'lucide-react'
 import React, { useState } from 'react'
 
-
 const TemplateSelector = ({ selectedTemplate, onChange }) => {
 
     const [isOpen, setIsOpen] = useState(false)
@@ -26,6 +25,11 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
             id: "minimal",
             name: "Minimal",
             preview: "Ultra-clean design that puts your content front and center",
+        },
+        {
+            id: "iitbhu",
+            name: "IITBHU",
+            preview: "Ultra-clean design for IIT BHU Students",
         },
     ]
 

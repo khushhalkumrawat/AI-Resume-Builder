@@ -1,5 +1,14 @@
-import { BriefcaseBusiness, Globe, Mail, Phone, User} from 'lucide-react'
-import React from 'react'
+import {
+    BriefcaseBusiness,
+    Globe,
+    Mail,
+    MapPin,
+    Phone,
+    User,
+    Trophy,
+    Code
+} from "lucide-react";
+import React from "react";
 
 export const PersonalInfoForm = ({ data, onChange, removeBackground, ssetRemoveBackground }) => {
 
@@ -7,20 +16,153 @@ export const PersonalInfoForm = ({ data, onChange, removeBackground, ssetRemoveB
         onChange({ ...data, [field]: value })
     }
 
-    const fields = [
-        { key: "full_name", label: "FUll Name", icon: User, type: "text", required: true },
-        { key: "email", label: "Email Address", icon: Mail, type: "email", required: true },
-        { key: "phone", label: "Phone Number", icon: Phone, type: "tel" },
-        { key: "location", label: "Profession", icon: BriefcaseBusiness, type: "text" }, 
-        { key: "Linkedin", label: "Linkedin Profile Link", icon: Globe, type: "url" },
-        { key: "website", label: "Personal Websites", icon: Globe, type: "url" }
-    ]
+    const basicFields = [
+        {
+            key: "full_name",
+            label: "Full Name",
+            icon: User,
+            type: "text",
+            required: true,
+        },
+        {
+            key: "profession",
+            label: "Profession",
+            icon: BriefcaseBusiness,
+            type: "text",
+        },
+        {
+            key: "email",
+            label: "Email Address",
+            icon: Mail,
+            type: "email",
+            required: true,
+        },
+        {
+            key: "phone",
+            label: "Phone Number",
+            icon: Phone,
+            type: "tel",
+        },
+        {
+            key: "location",
+            label: "Location",
+            icon: MapPin,
+            type: "text",
+        },
+    ];
+
+    const profileFields = [
+        {
+            key: "linkedin",
+            label: "LinkedIn Profile",
+            icon: Globe,
+        },
+        {
+            key: "portfolio",
+            label: "Portfolio Website",
+            icon: Globe,
+        },
+        {
+            key: "github",
+            label: "GitHub Profile",
+            icon: Globe,
+        },
+        {
+            key: "leetcode",
+            label: "LeetCode Profile",
+            icon: Trophy,
+        },
+        {
+            key: "codeforces",
+            label: "Codeforces Profile",
+            icon: Code,
+        },
+        {
+            key: "codechef",
+            label: "CodeChef Profile",
+            icon: Code,
+        },
+        {
+            key: "geeksforgeeks",
+            label: "GeeksforGeeks Profile",
+            icon: Code,
+        },
+        {
+            key: "atcoder",
+            label: "AtCoder Profile",
+            icon: Code,
+        },
+    ];
 
     return (
         <div>
 
-            <h3 className='text-lg font-semibold text-gray-900'>Perosnal Information</h3>
-            <p className='text-sm text-gray-600'>Get Started with the personal information</p>
+            <h4 className="mt-6 mb-3 font-semibold text-gray-800">
+                Basic Information
+            </h4>
+
+            {basicFields.map((field) => {
+                const Icon = field.icon;
+
+                return (
+                    <div key={field.key} className="space-y-1 mt-4">
+
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <Icon className="size-4" />
+
+                            {field.label}
+
+                            {field.required && (
+                                <span className="text-red-500">*</span>
+                            )}
+                        </label>
+
+                        <input
+                            type={field.type}
+                            value={data[field.key] || ""}
+                            onChange={(e) =>
+                                handleChange(field.key, e.target.value)
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 outline-none text-sm"
+                            placeholder={`Enter your ${field.label.toLowerCase()}`}
+                            required={field.required}
+                        />
+
+                    </div>
+                );
+            })}
+
+            <h4 className="mt-8 mb-3 font-semibold text-gray-800">
+                Professional Profiles
+            </h4>
+
+            {profileFields.map((field) => {
+                const Icon = field.icon;
+
+                return (
+                    <div key={field.key} className="space-y-1 mt-4">
+
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                            <Icon className="size-4" />
+
+                            {field.label}
+                        </label>
+
+                        <input
+                            type="url"
+                            value={data[field.key] || ""}
+                            onChange={(e) =>
+                                handleChange(field.key, e.target.value)
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 outline-none text-sm"
+                            placeholder={`https://...`}
+                        />
+
+                    </div>
+                );
+            })}
+
+
             <div className='flex items-center gap-2'>
 
                 <label>
@@ -42,26 +184,14 @@ export const PersonalInfoForm = ({ data, onChange, removeBackground, ssetRemoveB
                         <label className='relative inline-flex items-center cursor-pointer text-gray-900 gap-3'>
                             <input type="checkbox" className="sr-only peer" onChange={() => ssetRemoveBackground(prev => !prev)} checked={removeBackground} />
                             <div className='w-9 h-5 bg-slate-300 rounded-full peer peer-checked:bg-green-600 transition-colors duration-200'>
-                            <span className='dot absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4'></span>
+                                <span className='dot absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4'></span>
                             </div>
                         </label>
                     </div>
                 )}
             </div>
 
-            {fields.map((field) => {
-                const Icon = field.icon;
-                return (
-                    <div key = {field.key} className = 'space-y-1 mt-5'>
-                        <label className = "flex items-center gap-2 text-sm font-medium text-gray-600">
-                            <Icon className = "size-4" />
-                            {field.label}
-                            {field.required && <span className = "text-red-500">*</span>}
-                        </label>
-                        <input type={field.type} value={data[field.key] || "" } onChange={(e) => handleChange(field.key , e.target.value)} className = "mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-sm" placeholder={`Enter your ${field.label.toLowerCase()}`} required/>
-                    </div>
-                )
-            })}
+
 
 
 

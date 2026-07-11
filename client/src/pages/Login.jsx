@@ -32,7 +32,23 @@ const Login = () => {
       localStorage.setItem('token', data.token)
       toast.success(data.message)
     } catch (error) {
-      toast(error?.response?.data?.message || error.message)
+      let message = `Unable to ${state}. Please try again.`;
+
+      if (error.code === "ECONNABORTED") {
+        message = "The request timed out. Please try again.";
+      } else if (!error.response) {
+        message =
+          "Unable to connect to the server. Please check your internet connection.";
+      } else if (error.response.status === 400) {
+        // Validation errors from backend
+        message = error.response.data?.message || message;
+      } else if (error.response.status === 401) {
+        message = "Invalid email or password.";
+      } else if (error.response.status === 409) {
+        message = "An account with this email already exists.";
+      }
+
+      toast.error(message);
     }
   }
 
@@ -62,9 +78,6 @@ const Login = () => {
         <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
           <Lock size={13} color='#6B7280' />
           <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0" value={formData.password} onChange={handleChange} required />
-        </div>
-        <div className="mt-4 text-left text-indigo-500">
-          <button className="text-sm" type="reset">Forget password?</button>
         </div>
         <button type="submit" className="mt-2 w-full h-11 rounded-full text-white bg-green-500 hover:opacity-90 transition-opacity">
           {state === "login" ? "Login" : "Sign up"}

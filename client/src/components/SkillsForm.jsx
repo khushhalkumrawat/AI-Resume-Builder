@@ -1,71 +1,150 @@
-import { Plus, Sparkles, X } from 'lucide-react'
-import React, { useState } from 'react'
-import { data } from 'react-router-dom'
+import { Plus, X } from "lucide-react";
+import React, { useState } from "react";
 
-const SkillsForm = ({data=[] , onChange}) => {
+const SkillsForm = ({ data = [], onChange }) => {
+    const [category, setCategory] = useState("");
+    const [skills, setSkills] = useState("");
 
-    const [newSkill, setNewSkill] = useState("")
+    const addCategory = () => {
+        if (!category.trim() || !skills.trim()) return;
 
-    const addSkill = () => {
-        if (newSkill.trim() && !data.includes(newSkill.trim())) {
-            onChange([...data, newSkill.trim()])
-            setNewSkill("")
+        const exists = data.some(
+            (item) =>
+                item.category.toLowerCase() === category.trim().toLowerCase()
+        );
+
+        if (exists) {
+            alert("Category already exists.");
+            return;
         }
-    }
 
-    const removeSkill = (indexToRemove) => {
-        onChange(data.filter((_, index) => index !== indexToRemove))
-    }
+        onChange([
+            ...data,
+            {
+                category: category.trim(),
+                skills: skills
+                    .split(",")
+                    .map((skill) => skill.trim())
+                    .filter(Boolean),
+            },
+        ]);
 
-    const handleKeyPress = (e) => {
+        setCategory("");
+        setSkills("");
+    };
 
+    const removeCategory = (index) => {
+        onChange(data.filter((_, i) => i !== index));
+    };
+
+    const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            addSkill();
+            addCategory();
         }
-    }
+    };
 
     return (
-
-        <div className='space-y-4'>
-            <div >
-                <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'> SKills </h3>
-                <p className='text-sm text-gray-500'> Add your technical and soft skills </p>
+        <div className="space-y-5">
+            {/* Header */}
+            <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                    Skills
+                </h3>
+                <p className="text-sm text-gray-500">
+                    Create your own skill categories and add skills separated by commas.
+                </p>
             </div>
 
-            <div className='flex gap-2'>
+            {/* Inputs */}
+            <div className="space-y-3">
 
-                <input type="text" placeholder="Enter a skill (e.g. , Javascript , Problem Solving , System Design , Project Management)" className="flex-1 px-3 py-2 text-sm" onChange={(e) => setNewSkill(e.target.value)} value={newSkill} onKeyDown={handleKeyPress} />
+                <input
+                    type="text"
+                    placeholder="Category (e.g. Programming Languages)"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
 
-                <button onClick={addSkill} disabled={!newSkill.trim} className='flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'  >
-                    <Plus className='size-4' /> Add
+                <input
+                    type="text"
+                    placeholder="Skills (e.g. C++, JavaScript, Python)"
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+
+                <button
+                    onClick={addCategory}
+                    disabled={!category.trim() || !skills.trim()}
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Plus className="w-4 h-4" />
+                    Add Category
                 </button>
+
             </div>
 
+            {/* Preview */}
             {data.length > 0 ? (
-                <div className='flex flex-wrap gap-2'>
-                    {data.map((skill , index) => (
-                        <span key={index} className='flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm '> {skill}
-                            <button onClick={() => removeSkill(index)} className='ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors'>
-                                <X className='w-3 h-3' />
+                <div className="space-y-3">
+                    {data.map((item, index) => (
+                        <div
+                            key={index}
+                            className="flex items-start justify-between rounded-lg border border-gray-200 p-3"
+                        >
+                            <div className="flex-1">
+                                <span className="font-bold">
+                                    {item.category} :
+                                </span>{" "}
+                                <span>{item.skills.join(", ")}</span>
+                            </div>
+
+                            <button
+                                onClick={() => removeCategory(index)}
+                                className="ml-3 rounded-full p-1 hover:bg-red-100"
+                            >
+                                <X className="w-4 h-4 text-red-500" />
                             </button>
-                        </span>
+                        </div>
                     ))}
                 </div>
-            ) : (<div>
-                <Sparkles className='w-10 h-10 mx-auto mb-2 text-gray-300' />
-                <p> No skills added yet.</p>
-                <p className='text-sm' > Add your technical and soft skills above.</p>
-            </div>
+            ) : (
+                <div className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-500">
+                    <p className="font-medium">No skill categories added yet.</p>
+                    <p className="text-sm mt-1">
+                        Create a category and add comma-separated skills.
+                    </p>
+                </div>
             )}
 
-            <div>
-                <p> <strong>Tip : </strong >Add 8-12 relevant skills , include both technical skills (programming languages ,  tools) and soft skills (leadership , communication). </p>
+            {/* Tip */}
+            <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900">
+                <strong>Example</strong>
+
+                <div className="mt-2 space-y-1">
+                    <div>
+                        <strong>Programming Languages :</strong> C++, JavaScript, Python
+                    </div>
+
+                    <div>
+                        <strong>Frontend :</strong> HTML5, CSS3, React.js
+                    </div>
+
+                    <div>
+                        <strong>Backend :</strong> Node.js, Express.js
+                    </div>
+
+                    <div>
+                        <strong>Tools & Technologies :</strong> Git, Docker, VS Code
+                    </div>
+                </div>
             </div>
-
         </div>
+    );
+};
 
-    )
-}
-
-export default SkillsForm
+export default SkillsForm;

@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken"
 
 const protect = async (req , res, next) => {
 
+    console.log("Protect Middleware");
+    
     const token = req.headers.authorization;
 
     if (!token) {

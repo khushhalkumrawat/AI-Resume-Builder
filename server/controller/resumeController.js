@@ -47,27 +47,33 @@ export const deleteResume = async (req, res) => {
 export const getResumeById = async (req, res) => {
     try {
         const userId = req.userId;
-
         const { resumeId } = req.params;
 
-        //create new resume
-        const resume = await Resume.create({ userId, title })
+        const resume = await Resume.findOne({
+            _id: resumeId,
+            userId,
+        });
 
         if (!resume) {
-            return res.status(404).json({ message: "Resume not found" })
+            return res.status(404).json({
+                message: "Resume not found",
+            });
         }
 
         resume.__v = undefined;
         resume.createdAt = undefined;
         resume.updatedAt = undefined;
 
-        // return success message
-        return res.status(200).json({ resume })
+        return res.status(200).json({ resume });
 
     } catch (error) {
-        return res.status(400).json({ message: error.message })
+        console.error(error);          // <-- IMPORTANT
+        console.error(error.stack);    // <-- IMPORTANT
+        return res.status(400).json({
+            message: error.message,
+        });
     }
-}
+};
 
 // get resume by id public
 // GET : /api/resumes/public
@@ -94,41 +100,50 @@ export const getPublicResumeById = async (req, res) => {
 
 export const updateResume = async (req, res) => {
     try {
+        console.log("Controller entered");
 
         const userId = req.userId;
-        const { resumeId, resumeData, removeBackground } = req.body
+        const { resumeId, resumeData, removeBackground } = req.body;
         const image = req.file;
+
+        console.log("resumeId:", resumeId);
 
         let resumeDataCopy;
 
-        if(typeof resumeData === 'string') {
-            resumeDataCopy = await JSON.parse(resumeData)
-        }
-        else{
-            resumeDataCopy = structedClone(resumeData)
+        if (typeof resumeData === "string") {
+            console.log("Parsing JSON");
+            resumeDataCopy = JSON.parse(resumeData);
+        } else {
+            console.log("Using structuredClone");
+            resumeDataCopy = structuredClone(resumeData);
         }
 
         if (image) {
-
-            const imageBufferData = fs.createReadStream(image.path) 
-
-            const response = await imagekit.files.upload({
-                file: imageBufferData,
-                fileName: 'resume.png',
-                folder : 'user-resumes',
-                transformation : {
-                    pre : 'w-300,h-300,fo-face,z-0.75' + (removeBackground ? ',e-bgremove' : '')
-                }
-            });
-
-            resumeDataCopy.personal_info.image = response.url
-
+            console.log("Uploading image...");
+            // image upload code
         }
 
-        const resume = await Resume.findOneAndUpdate({ userId, _id: resumeId }, resumeDataCopy, { new: true })
+        console.log("Before findOneAndUpdate");
 
-        return res.status(200).json({ message: 'Saved Successfully', resume })
+        const resume = await Resume.findOneAndUpdate(
+            { userId, _id: resumeId },
+            resumeDataCopy,
+            { new: true }
+        );
+
+        console.log("After findOneAndUpdate", resume);
+
+        return res.status(200).json({
+            message: "Saved Successfully",
+            resume,
+        });
+
     } catch (error) {
-        return res.status(400).json({ message: error.message })
+        console.error(error);
+        console.error(error.stack);
+
+        return res.status(400).json({
+            message: error.message,
+        });
     }
-}
+};

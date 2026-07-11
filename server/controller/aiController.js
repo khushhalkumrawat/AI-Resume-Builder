@@ -27,6 +27,7 @@ export const enhanceProfessioanlSummary = async (req, res) => {
         });
 
         const enhancedContent = response.choices[0].message;
+        console.log(enhancedContent);
 
         return res.status(200).json({ enhancedContent })
     } catch (error) {
@@ -60,6 +61,41 @@ export const enhanceJobDescription = async (req, res) => {
         });
 
         const enhancedContent = response.choices[0].message;
+        console.log(enhancedContent);
+
+        return res.status(200).json({ enhancedContent })
+    } catch (error) {
+        return res.status(400).json({ message: error.message })
+    }
+}
+
+// controller for enhancing a resume's job description
+// POST : /api/ai/enhance-project-desc
+
+export const enhanceProjectDescription = async (req, res) => {
+    try {
+        const { userContent } = req.body;
+
+        if (!userContent) {
+            return res.status(400).json({ message: "Missing required fields" })
+        }
+
+        const response = await ai.chat.completions.create({
+            model: process.env.OPENAI_MODEL,
+            messages: [
+                {
+                    role: "system",
+                    content: "You are an expert in resume writing. Your task is to enhance the project description  of a resume. The project description should be 3-4 sentences also highlighting key impacts and achievements. Use action verbs and quantifiable results where possible. Make it ATS-friendly. and only return text no options or anything else"
+                },
+                {
+                    role: "user",
+                    content: userContent,
+                },
+            ],
+        });
+
+        const enhancedContent = response.choices[0].message;
+        console.log(enhancedContent);
 
         return res.status(200).json({ enhancedContent })
     } catch (error) {
@@ -85,71 +121,95 @@ export const uploadResume = async (req, res) => {
 
         const systemPrompt = "You are an expert AI agent to extract data from resume."
 
-        const userPrompt = `extract data from this resume : ${resumeText} Provide data in the following JSON format with no additional text before or after : 
-       
-        {
-        professional_summary : {type : String , default : ''},
-        skills : {type : String },
-        personal_info : {
-        image : {type : String , default : ''},
-        full_name : {type : String , default : ''},
-        profession : {type : String , default : ''},
-        email : {type : String , default : ''},
-        phone : {type : String , default : ''},
-        location : {type : String , default : ''},
-        linkedin : {type : String , default : ''},
-        website  : {type : String , default : ''},
-        },
+        const userPrompt = `
+Extract all information from the following resume and return ONLY valid JSON.
 
-        experience : [
-        {
-            company : {type : String},
-            position : {type : String},
-            start_date : {type : String},
-            end_date : {type : String},
-            description : {type : String},
-            is_current : {type : String},
+Rules:
+- Return ONLY a JSON object.
+- Do NOT wrap the JSON in markdown.
+- Do NOT add explanations or extra text.
+- Do NOT invent any information.
+- If a field is missing, use an empty string "".
+- If an array has no items, return [].
+- Keep dates exactly as written in the resume.
+- "is_current" must be a boolean (true or false).
+- "skills" must be an array of strings.
 
-        }
-    ],
+Resume:
 
-    project : [
-        {
-            name : {type : String},
-            type : {type : String},
-            description : {type : String},
-        }
-    ],
+${resumeText}
 
-    education : [
-        {
+Return the data in exactly this format:
 
-            institution : {type : String},
-            degree : {type : String},
-            field : {type : String},
-            graduation_date : {type : String},
-            gpa : {type : String},
+{
+  "professional_summary": "",
 
-        }
-    ],
- }
+  "skills": [],
 
-        `
+  "personal_info": {
+    "image": "",
+    "full_name": "",
+    "profession": "",
+    "email": "",
+    "phone": "",
+    "location": "",
+    "linkedin": "",
+    "portfolio": "",
+    "github": "",
+    "leetcode": "",
+    "codeforces": "",
+    "codechef": "",
+    "geeksforgeeks": "",
+    "atcoder": ""
+  },
 
-        const response = await ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL,
-            messages: [
-                {
-                    role: "system",
-                    content: systemPrompt
-                },
-                {
-                    role: "user",
-                    content: userPrompt,
-                },
-            ],
-            response_format: { type: 'json_object' }
-        });
+  "experience": [
+    {
+      "company": "",
+      "position": "",
+      "location": "",
+      "employment_type": "",
+      "start_date": "",
+      "end_date": "",
+      "is_current": false,
+      "description": ""
+    }
+  ],
+
+  "project": [
+    {
+      "name": "",
+      "type": "",
+      "tech_stack": "",
+      "github": "",
+      "live_demo": "",
+      "description": ""
+    }
+  ],
+
+  "education": [
+    {
+      "institution": "",
+      "degree": "",
+      "field": "",
+      "graduation_date": "",
+      "gpa": ""
+    }
+  ],
+
+  "achievements": [],
+
+  "certifications": [
+    {
+      "name": "",
+      "issuer": "",
+      "issue_date": "",
+      "credential_id": "",
+      "credential_url": ""
+    }
+  ]
+}
+`;
 
         const extractedData = response.choices[0].message.content;
         const parsedData = JSON.parse(extractedData)
