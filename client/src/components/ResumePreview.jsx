@@ -3,7 +3,7 @@ import ClassicTemplate from '../assets/templates/ClassicTemplate'
 import ModernTemplate from '../assets/templates/ModernTemplate'
 import MinimalTemplate from '../assets/templates/MinimalTemplate'
 import MinimalImageTemplate from '../assets/templates/MinimalImageTemplate'
-import IITBHUTemplate from '../assets/templates/IITBHUTemplate'
+import PopularTemplate from '../assets/templates/PopularTemplate'
 import { forwardRef } from "react";
 
 const ResumePreview = forwardRef(({ data, template, accentColor, sectionOrder, classes = "", }, ref) => {
@@ -11,17 +11,19 @@ const ResumePreview = forwardRef(({ data, template, accentColor, sectionOrder, c
   const renderTemplate = () => {
 
     switch (template) {
-      case "modern":
-        return <ModernTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+      case "classic":
+        return <ClassicTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
       case "minimal":
         return <MinimalTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
       case "minimal-image":
         return <MinimalImageTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
-      case "iitbhu":
-        return <IITBHUTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />
+      case "popular":
+        return <PopularTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />
+      case "modern":
+        return <ModernTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} /> 
 
       default:
-        return <ClassicTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+        return <PopularTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
     }
 
   }

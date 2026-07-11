@@ -27,9 +27,9 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
             preview: "Ultra-clean design that puts your content front and center",
         },
         {
-            id: "iitbhu",
-            name: "IITBHU",
-            preview: "Ultra-clean design for IIT BHU Students",
+            id: "popular",
+            name: "popular",
+            preview: "Ultra-clean design , used frequently",
         },
     ]
 
