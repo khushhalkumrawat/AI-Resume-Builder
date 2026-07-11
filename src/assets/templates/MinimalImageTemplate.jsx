@@ -18,7 +18,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     {/* Image */}
                     {data.personal_info?.image && typeof data.personal_info.image === 'string' ? (
                         <div className="mb-6">
-                            <img src={data.personal_info.image} alt="Profile" className="w-32 h-32 object-cover rounded-full mx-auto" style={{ background: accentColor+'70' }} />
+                            <img src={data.personal_info.image} alt="Profile" className="w-32 h-32 object-cover rounded-full mx-auto" style={{ background: accentColor + '70' }} />
                         </div>
                     ) : (
                         data.personal_info?.image && typeof data.personal_info.image === 'object' ? (
@@ -44,51 +44,91 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
 
 
                     {/* Contact */}
+                    {/* Contact */}
                     <section className="mb-8">
                         <h2 className="text-sm font-semibold tracking-widest text-zinc-600 mb-3">
                             CONTACT
                         </h2>
+
                         <div className="space-y-2 text-sm">
+
                             {data.personal_info?.phone && (
                                 <div className="flex items-center gap-2">
                                     <Phone size={14} style={{ color: accentColor }} />
                                     <span>{data.personal_info.phone}</span>
                                 </div>
                             )}
+
                             {data.personal_info?.email && (
                                 <div className="flex items-center gap-2">
                                     <Mail size={14} style={{ color: accentColor }} />
                                     <span>{data.personal_info.email}</span>
                                 </div>
                             )}
+
                             {data.personal_info?.location && (
                                 <div className="flex items-center gap-2">
                                     <MapPin size={14} style={{ color: accentColor }} />
                                     <span>{data.personal_info.location}</span>
                                 </div>
                             )}
+
+                            {data.personal_info?.portfolio && (
+                                <p>{data.personal_info.portfolio}</p>
+                            )}
+
+                            {data.personal_info?.linkedin && (
+                                <p>{data.personal_info.linkedin}</p>
+                            )}
+
+                            {data.personal_info?.github && (
+                                <p>{data.personal_info.github}</p>
+                            )}
+
+                            {data.personal_info?.leetcode && (
+                                <p>{data.personal_info.leetcode}</p>
+                            )}
+
+                            {data.personal_info?.codeforces && (
+                                <p>{data.personal_info.codeforces}</p>
+                            )}
+
+                            {data.personal_info?.codechef && (
+                                <p>{data.personal_info.codechef}</p>
+                            )}
+
+                            {data.personal_info?.geeksforgeeks && (
+                                <p>{data.personal_info.geeksforgeeks}</p>
+                            )}
+
+                            {data.personal_info?.atcoder && (
+                                <p>{data.personal_info.atcoder}</p>
+                            )}
+
                         </div>
                     </section>
 
                     {/* Education */}
-                    {data.education && data.education.length > 0 && (
-                        <section className="mb-8">
-                            <h2 className="text-sm font-semibold tracking-widest text-zinc-600 mb-3">
-                                EDUCATION
-                            </h2>
-                            <div className="space-y-4 text-sm">
-                                {data.education.map((edu, index) => (
-                                    <div key={index}>
-                                        <p className="font-semibold uppercase">{edu.degree}</p>
-                                        <p className="text-zinc-600">{edu.institution}</p>
-                                        <p className="text-xs text-zinc-500">
-                                            {formatDate(edu.graduation_date)}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
+                    <div key={index}>
+                        <p className="font-semibold uppercase">
+                            {edu.degree}
+                            {edu.field && ` in ${edu.field}`}
+                        </p>
+
+                        <p className="text-zinc-600">
+                            {edu.institution}
+                        </p>
+
+                        {edu.gpa && (
+                            <p className="text-xs text-zinc-500">
+                                GPA : {edu.gpa}
+                            </p>
+                        )}
+
+                        <p className="text-xs text-zinc-500">
+                            {formatDate(edu.graduation_date)}
+                        </p>
+                    </div>
 
                     {/* Skills */}
                     {data.skills && data.skills.length > 0 && (
@@ -103,6 +143,22 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                             </ul>
                         </section>
                     )}
+
+
+                    {data.achievements?.length > 0 && (
+                        <section className="mt-8">
+                            <h2 className="text-sm font-semibold tracking-widest text-zinc-600 mb-3">
+                                ACHIEVEMENTS
+                            </h2>
+
+                            <ul className="space-y-2 text-sm list-disc list-inside">
+                                {data.achievements.map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+
                 </aside>
 
                 {/* Right Content */}
@@ -121,59 +177,91 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     )}
 
                     {/* Experience */}
-                    {data.experience && data.experience.length > 0 && (
-                        <section>
-                            <h2 className="text-sm font-semibold tracking-widest mb-4" style={{ color: accentColor }} >
-                                EXPERIENCE
-                            </h2>
-                            <div className="space-y-6 mb-8">
-                                {data.experience.map((exp, index) => (
-                                    <div key={index}>
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="font-semibold text-zinc-900">
-                                                {exp.position}
-                                            </h3>
-                                            <span className="text-xs text-zinc-500">
-                                                {formatDate(exp.start_date)} -{" "}
-                                                {exp.is_current ? "Present" : formatDate(exp.end_date)}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm mb-2" style={{ color: accentColor }} >
-                                            {exp.company}
-                                        </p>
-                                        {exp.description && (
-                                            <ul className="list-disc list-inside text-sm text-zinc-700 leading-relaxed space-y-1">
-                                                {exp.description.split("\n").map((line, i) => (
-                                                    <li key={i}>{line}</li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
+                    <div key={index}>
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-semibold text-zinc-900">
+                                {exp.position}
+                            </h3>
+
+                            <span className="text-xs text-zinc-500">
+                                {formatDate(exp.start_date)} -{" "}
+                                {exp.is_current ? "Present" : formatDate(exp.end_date)}
+                            </span>
+                        </div>
+
+                        <p className="text-sm" style={{ color: accentColor }}>
+                            {exp.company}
+                        </p>
+
+                        {(exp.location || exp.employment_type) && (
+                            <p className="text-xs text-zinc-500 mb-2">
+                                {exp.location}
+                                {exp.location && exp.employment_type && " • "}
+                                {exp.employment_type}
+                            </p>
+                        )}
+
+                        {exp.description && (
+                            <ul className="list-disc list-inside text-sm text-zinc-700 leading-relaxed space-y-1">
+                                {exp.description.split("\n").map((line, i) => (
+                                    <li key={i}>{line}</li>
                                 ))}
-                            </div>
-                        </section>
-                    )}
+                            </ul>
+                        )}
+                    </div>
 
                     {/* Projects */}
-                    {data.project && data.project.length > 0 && (
-                        <section>
-                            <h2 className="text-sm uppercase tracking-widest font-semibold" style={{ color: accentColor }}>
-                                PROJECTS
+                    <div key={index}>
+                        <h3 className="text-md font-medium text-zinc-800 mt-3">
+                            {project.name}
+                        </h3>
+
+                        {(project.type || project.tech_stack) && (
+                            <p className="text-sm" style={{ color: accentColor }}>
+                                {project.type}
+                                {project.type && project.tech_stack && " • "}
+                                {project.tech_stack}
+                            </p>
+                        )}
+
+                        {project.description && (
+                            <ul className="list-disc list-inside text-sm text-zinc-700 space-y-1">
+                                {project.description.split("\n").map((line, i) => (
+                                    <li key={i}>{line}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {(project.github || project.live_demo) && (
+                            <p className="text-xs text-zinc-500 mt-2">
+                                {project.github}
+                                {project.github && project.live_demo && " | "}
+                                {project.live_demo}
+                            </p>
+                        )}
+                    </div>
+
+                    {data.certifications?.length > 0 && (
+                        <section className="mt-8">
+                            <h2
+                                className="text-sm uppercase tracking-widest font-semibold mb-3"
+                                style={{ color: accentColor }}
+                            >
+                                CERTIFICATIONS
                             </h2>
-                            <div className="space-y-4">
-                                {data.project.map((project, index) => (
+
+                            <div className="space-y-3">
+                                {data.certifications.map((cert, index) => (
                                     <div key={index}>
-                                        <h3 className="text-md font-medium text-zinc-800 mt-3">{project.name}</h3>
-                                        <p className="text-sm mb-1" style={{ color: accentColor }} >
-                                            {project.type}
+                                        <h3 className="font-medium">{cert.name}</h3>
+
+                                        <p className="text-sm text-zinc-600">
+                                            {cert.issuer}
                                         </p>
-                                        {project.description && (
-                                            <ul className="list-disc list-inside text-sm text-zinc-700  space-y-1">
-                                                {project.description.split("\n").map((line, i) => (
-                                                    <li key={i}>{line}</li>
-                                                ))}
-                                            </ul>
-                                        )}
+
+                                        <p className="text-xs text-zinc-500">
+                                            {formatDate(cert.issue_date)}
+                                        </p>
                                     </div>
                                 ))}
                             </div>

@@ -2,8 +2,16 @@ import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloudIcon, XIco
 import React, { useEffect, useState } from 'react'
 import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import api from '../configs/api'
+import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import pdfToText from 'react-pdftotext'
+import { LoaderCircleIcon } from 'lucide-react'
 
 const Dashboard = () => {
+
+  const { user, token } = useSelector(state => state.auth)
 
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"]
   const [allResumes, setAllResumes] = useState([])
@@ -12,49 +20,141 @@ const Dashboard = () => {
   const [title, setTitle] = useState('')
   const [resume, setResume] = useState(null)
   const [editResumeId, setEditResumeId] = useState('')
+
+  const [isLoading, setIsLoading] = useState(true)
+
   const navigate = useNavigate()
 
   const loadAllResumes = async () => {
-    setAllResumes(dummyResumeData)
+    try {
+      const { data } = await api.get('/api/users/resumes', { headers: { Authorization: token } })
+      setAllResumes(data.resumes)
+    } catch (error) {
+
+      let message = "Failed to load resumes:";
+
+      // Keep UI usable
+      setAllResumes([]);
+
+      // Only notify for important cases
+      if (error.response?.status === 401) {
+        toast.error("Your session has expired. Please log in again.");
+      } else if (!error.response) {
+        toast.error("Unable to connect to the server.");
+      }
+      else {
+        toast.error(message);
+      }
+    }
   }
 
   const createResume = async (e) => {
-    e.preventDefault()
-    setShowCreateResume(false)
-    navigate('/app/builder/resume-id')
+    try {
+      e.preventDefault()
+      const { data } = await api.post('/api/resumes/create', { title }, { headers: { Authorization: token } })
+      setAllResumes([...allResumes, data.resume])
+      setTitle('')
+      setShowCreateResume(false)
+      navigate(`/app/builder/${data.resume._id}`)
+    } catch (error) {
+
+      console.error("Create resume failed:", error);
+
+      let message = "Unable to create your resume. Please try again.";
+
+      if (error.code === "ECONNABORTED") {
+        message = "The request timed out. Please try again.";
+      } else if (!error.response) {
+        message = "Unable to connect to the server. Please check your internet connection.";
+      } else if (error.response.status === 401) {
+        message = "Your session has expired. Please log in again.";
+      } else if (error.response.status === 400) {
+        // Show backend validation message only for expected user errors
+        message = error.response.data?.message || message;
+      }
+
+      toast.error(message);
+
+    }
   }
 
   const uploadResume = async (e) => {
     e.preventDefault()
-    setShowUploadResume(false)
-    navigate('/app/builder/resume-id')
-  }
+    try {
+      console.log("before pdf");
+      const resumeText = await pdfToText(resume)
+      console.log("after pdf");
+      const { data } = await api.post('/api/ai/upload-resume', { title, resumeText }, { headers: { Authorization: token, }, });
+      console.log("after api");
+      setTitle("")
+      setResume(null)
+      setShowUploadResume(false)
+      navigate(`/app/builder/${data.resumeId}`)
+    } catch (error) {
+      console.error("Resume upload failed:", error);
 
-  const editTitle = (e) => {
-    e.preventDefault();
+      let message = "Unable to process your resume at the moment. Please try again in a few minutes.";
 
-    setAllResumes((prevResumes) =>
-      prevResumes.map((resume) =>
-        resume._id === editResumeId
-          ? { ...resume, title: title }
-          : resume
-      )
-    );
+      if (error.code === "ECONNABORTED") {
+        message = "The request took too long. Please try again.";
+      } else if (!error.response) {
+        message = "Unable to connect to the server. Please check your internet connection.";
+      }
 
-    setEditResumeId('');
-    setTitle('');
-  }
-
-  const deleteResume = async(resumeId) => {
-    
-     const confirm = window.confirm('Are you sure you want to delete this resume?');
-
-     if (confirm) {
-      setAllResumes((prevResumes) =>
-        prevResumes.filter((resume) => resume._id !== resumeId)
-      );
+      toast.error(message);
     }
+  };
 
+  const editTitle = async (e) => {
+    try {
+      e.preventDefault()
+      const { data } = await api.put(`/api/resumes/update`, { resumeId: editResumeId, resumeData: { title } }, { headers: { Authorization: token } })
+      setAllResumes(allResumes.map(resume => resume._id === editResumeId ? { ...resume, title } : resume))
+      setTitle('')
+      setEditResumeId('')
+      toast.success(data.message)
+    } catch (error) {
+      let message = "Unable to update the resume title. Please try again.";
+
+      if (error.code === "ECONNABORTED") {
+        message = "The request timed out. Please try again.";
+      } else if (!error.response) {
+        message = "Unable to connect to the server. Please check your internet connection.";
+      } else if (error.response.status === 401) {
+        message = "Your session has expired. Please log in again.";
+      } else if (error.response.status === 400) {
+        message = error.response.data?.message || message;
+      }
+
+      toast.error(message);
+    }
+  }
+
+  const deleteResume = async (resumeId) => {
+
+    try {
+      const confirm = window.confirm('Are you sure you want to delete this resume?');
+      if (confirm) {
+        const { data } = await api.delete(`/api/resumes/delete/${resumeId}`, { headers: { Authorization: token } })
+        setAllResumes(allResumes.filter(resume => resume._id !== resumeId))
+        toast.success(data.message)
+      }
+    } catch (error) {
+      let message = "Unable to delete the resume. Please try again.";
+
+      if (error.code === "ECONNABORTED") {
+        message = "The request timed out. Please try again.";
+      } else if (!error.response) {
+        message = "Unable to connect to the server. Please check your internet connection.";
+      } else if (error.response.status === 401) {
+        message = "Your session has expired. Please log in again.";
+      } else if (error.response.status === 404) {
+        message = "The resume could not be found.";
+      } else if (error.response.status === 400) {
+        message = error.response.data?.message || message;
+      }
+      toast.error(message);
+    }
   }
 
   useEffect(() => {
@@ -104,7 +204,7 @@ const Dashboard = () => {
 
                 <div onClick={(e) => e.stopPropagation()} className='absolute top-1 right-1 group-hover:flex items-center hidden'>
 
-                  <TrashIcon onClick = {() => deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors ' />
+                  <TrashIcon onClick={() => deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors ' />
                   <PencilIcon onClick={() => { setEditResumeId(resume._id); setTitle(resume.title) }} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
 
                 </div>
@@ -156,7 +256,7 @@ const Dashboard = () => {
 
               </div>
 
-              <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-600 transition-colors' >
+              <button type="submit" className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-600 transition-colors flex items-center justify-center gap-2'   >
                 Upload Resume
               </button>
               <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={() => { setShowUploadResume(false); setTitle('') }} />
