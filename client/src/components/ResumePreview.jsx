@@ -3,34 +3,39 @@ import ClassicTemplate from '../assets/templates/ClassicTemplate'
 import ModernTemplate from '../assets/templates/ModernTemplate'
 import MinimalTemplate from '../assets/templates/MinimalTemplate'
 import MinimalImageTemplate from '../assets/templates/MinimalImageTemplate'
+import IITBHUTemplate from '../assets/templates/IITBHUTemplate'
+import { forwardRef } from "react";
 
-const ResumePreview = ({data,template,accentColor,classes = ""}) => {
-  
+const ResumePreview = forwardRef(({ data, template, accentColor, sectionOrder, classes = "", }, ref) => {
+
   const renderTemplate = () => {
 
-    switch(template) {
-        case "modern":
-            return <ModernTemplate data={data} accentColor={accentColor} />;
-        case "minimal":
-            return <MinimalTemplate data={data} accentColor={accentColor} />;  
-        case "minimal-image":
-            return <MinimalImageTemplate data={data} accentColor={accentColor} />;
+    switch (template) {
+      case "modern":
+        return <ModernTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+      case "minimal":
+        return <MinimalTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+      case "minimal-image":
+        return <MinimalImageTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+      case "iitbhu":
+        return <IITBHUTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />
 
-        default:
-            return <ClassicTemplate data={data} accentColor={accentColor} />; 
-    }  
+      default:
+        return <ClassicTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+    }
 
-  }  
+  }
 
 
   return (
-    <div className = 'w-full bg-gray-100'>
-        <div id ="resume-preview" className = {"border border-gray-200 print:shadow-none print:border-none" + classes }>
-         {renderTemplate()}
-        </div>
+    <div
+      className="w-full bg-gray-100" >
+      <div ref={ref} id="resume-preview" className={`border border-gray-200 shadow ${classes}`}>
+        {renderTemplate()}
+      </div>
 
-        <style>
-            {`
+      <style>
+        {`
              @page {
              size : letter;
              margin : 0;
@@ -61,10 +66,10 @@ const ResumePreview = ({data,template,accentColor,classes = ""}) => {
               }
             }
             `}
-        </style>
+      </style>
 
     </div>
   )
-}
+})
 
 export default ResumePreview

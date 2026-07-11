@@ -52,7 +52,6 @@ const App = () => {
         </Route>
 
         <Route path='view/:resumeId' element={<Preview />} />
-        
 
       </Routes>
 
