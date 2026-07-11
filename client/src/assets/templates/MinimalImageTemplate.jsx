@@ -177,7 +177,6 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     )}
 
                     {/* Experience */}
-<<<<<<< HEAD
                     <div key={index}>
                         <div className="flex justify-between items-center">
                             <h3 className="font-semibold text-zinc-900">
@@ -206,36 +205,6 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                             <ul className="list-disc list-inside text-sm text-zinc-700 leading-relaxed space-y-1">
                                 {exp.description.split("\n").map((line, i) => (
                                     <li key={i}>{line}</li>
-=======
-                    {data.experience && data.experience.length > 0 && (
-                        <section>
-                            <h2 className="text-sm font-semibold tracking-widest mb-4" style={{ color: accentColor }} >
-                                EXPERIENCE
-                            </h2>
-                            <div className="space-y-6 mb-8">
-                                {data.experience.map((exp, index) => (
-                                    <div key={index}>
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="font-semibold text-zinc-900">
-                                                {exp.position}
-                                            </h3>
-                                            <span className="text-xs text-zinc-500">
-                                                {formatDate(exp.start_date)} -{" "}
-                                                {exp.is_current ? "" : formatDate(exp.end_date)}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm mb-2" style={{ color: accentColor }} >
-                                            {exp.company}
-                                        </p>
-                                        {exp.description && (
-                                            <ul className="list-disc list-inside text-sm text-zinc-700 leading-relaxed space-y-1">
-                                                {exp.description.split("\n").map((line, i) => (
-                                                    <li key={i}>{line}</li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
->>>>>>> d453cae5d7cb3e98a6c9104d88337bfe4a5386eb
                                 ))}
                             </ul>
                         )}

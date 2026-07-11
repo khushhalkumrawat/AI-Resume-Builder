@@ -1,2 +1,19 @@
 node_modules
+<<<<<<< HEAD
+=======
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+>>>>>>> d453cae5d7cb3e98a6c9104d88337bfe4a5386eb
 .env
