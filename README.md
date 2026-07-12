@@ -1,7 +1,5 @@
 <<<<<<< HEAD
 # AI-Resume-Analyzer
-
-# React + Vite
 =======
 <div align="center">
 >>>>>>> 24876c2bc53da16661ff3efbf2c5be92f21e9f5e
@@ -16,7 +14,7 @@ An intelligent AI-powered platform to build professional resumes, Help to enchan
 
 <p>
 
-<a href="https://ai-resume-analyzer-grkrak5cl-khushhal.vercel.app">
+<a href="https://ai-resume-analyzer-khushhal.vercel.app/">
 <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-blue?style=for-the-badge"/>
 </a>
 
