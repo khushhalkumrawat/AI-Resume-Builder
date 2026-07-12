@@ -52,7 +52,7 @@ const MinimalTemplate = ({ data, accentColor }) => {
                                 <div className="flex justify-between items-baseline mb-1">
                                     <h3 className="text-lg font-medium">{exp.position}</h3>
                                     <span className="text-sm text-gray-500">
-                                        {formatDate(exp.start_date)} - {exp.is_current ? "Present" : formatDate(exp.end_date)}
+                                        {formatDate(exp.start_date)} - {exp.is_current ? "" : formatDate(exp.end_date)}
                                     </span>
                                 </div>
                                 <p className="text-gray-600 mb-2">{exp.company}</p>
