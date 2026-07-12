@@ -192,11 +192,11 @@ Whether you're a student, fresher, or experienced professional, this platform gu
 
 | Home Page | Resume Builder |
 |------------|----------------|
-| ![](./screenshots/home.png) | ![](./screenshots/builder.png) |
+| ![](./screenshot/home.png) | ![](./screenshot/builder.png) |
 
 | AI Analysis | Dashboard |
 |--------------|-----------|
-| ![](./screenshots/analyzer.png) | ![](./screenshots/dashboard.png) |
+| ![](./screenshot/Builder.png) | ![](./screenshot/Dashboard.png) |
 
 </div>
 
