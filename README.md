@@ -188,9 +188,9 @@ Whether you're a student, fresher, or experienced professional, this platform gu
 
 <div align="center">
 
-| Home Page | Resume Builder |
+| Home Page |
 |------------|----------------|
-| ![](./screenshot/home.png) | ![](./screenshot/builder.png) |
+| ![](./screenshot/Home.png) |
 
 | AI Analysis | Dashboard |
 |--------------|-----------|
