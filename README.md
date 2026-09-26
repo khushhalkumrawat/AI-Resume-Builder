@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-# AI-Resume-Analyzer
-=======
+# AI-Resume-Builder
 <div align="center">
->>>>>>> 24876c2bc53da16661ff3efbf2c5be92f21e9f5e
-
+  
 <img src="https://readme-typing-svg.herokuapp.com?font=Poppins&weight=700&size=34&duration=3000&pause=1000&color=4F46E5&center=true&vCenter=true&width=900&lines=AI+Resume+Analyzer;Build+Smarter+Resumes.;Get+AI-Powered+Feedback.;Land+More+Interviews.">
 
 <h1># 🤖 AI Resume Analyzer – Build ATS-Friendly Resumes with AI</h1>
