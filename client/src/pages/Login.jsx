@@ -57,14 +57,32 @@ const Login = () => {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleGuestLogin = () => {
+    setFormData(prev => ({
+          ...prev,
+          email : 'test@gmail.com',
+          password : 'test',
+    }))
+  }
+
 
   return (
 
     <div className='flex items-center justify-center min-h-screen bg-gray-50' >
 
-      <form onSubmit={handleSubmit} className="sm:w-[350px] w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
+      <form onSubmit={handleSubmit} className="sm:w-87.5 w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
         <h1 className="text-gray-900 text-3xl mt-10 font-medium">{state === "login" ? "Login" : "Sign up"}</h1>
         <p className="text-gray-500 text-sm mt-2">Please {state} in to continue</p>
+
+      {/* Guest Credientals */}
+      {state === "login" && 
+        ( <button type="button" onClick={handleGuestLogin} 
+        className="w-full mt-6 p-3 text-left border border-green-200 bg-green-50 rounded-xl hover:bg-green-100 transition" >
+       <p className="text-sm font-medium text-green-700"> Try Demo Account </p> 
+       <p className="text-xs text-gray-500 mt-1"> Click to automatically fill guest credentials </p> 
+       </button> 
+       )}
+
         {state !== "login" && (
           <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
             <User2Icon size={16} color='#6B7280' />

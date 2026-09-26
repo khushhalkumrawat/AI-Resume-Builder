@@ -121,23 +121,20 @@ export const uploadResume = async (req, res) => {
 
         const systemPrompt = "You are an expert AI agent to extract data from resume."
 
-        const userPrompt = `
-Extract all information from the following resume and return ONLY valid JSON.
+        const userPrompt = `Extract all information from the following resume and return ONLY valid JSON.
 
-Rules:
-- Return ONLY a JSON object.
-- Do NOT wrap the JSON in markdown.
-- Do NOT add explanations or extra text.
-- Do NOT invent any information.
-- If a field is missing, use an empty string "".
-- If an array has no items, return [].
-- Keep dates exactly as written in the resume.
-- "is_current" must be a boolean (true or false).
-- "skills" must be an array of strings.
+         Rules:
+         - Return ONLY a JSON object.
+         - Do NOT wrap the JSON in markdown.
+         - Do NOT add explanations or extra text.
+         - Do NOT invent any information.
+         - If a field is missing, use an empty string "".
+         - If an array has no items, return [].
+         - Keep dates exactly as written in the resume.
+         - "is_current" must be a boolean (true or false).
+         - "skills" must be an array of strings.
 
-Resume:
-
-${resumeText}
+Resume:${resumeText}
 
 Return the data in exactly this format:
 
@@ -208,8 +205,24 @@ Return the data in exactly this format:
       "credential_url": ""
     }
   ]
-}
-`;
+} `;
+
+        const response = await ai.chat.completions.create({
+                model: process.env.OPENAI_MODEL,
+                response_format: {
+                  type: "json_object"
+                },
+                 messages: [
+             {
+                 role: "system",
+                 content: systemPrompt
+             },
+             {
+                 role: "user",
+                 content: userPrompt
+             }
+           ]
+        });
 
         const extractedData = response.choices[0].message.content;
         const parsedData = JSON.parse(extractedData)

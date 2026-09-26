@@ -42,15 +42,14 @@ const Hero = () => {
                 `}
             </style>
 
-            <header id="home" className='bg-black text-white flex flex-col items-center bg-[url("https://assets.prebuiltui.com/images/components/hero-section/hero-background-image.png")] bg-cover bg-center bg-no-repeat pb-10'>
+            <header id="home" className='bg-gray-600 text-white flex flex-col items-center bg-[url("https://assets.prebuiltui.com/images/components/hero-section/hero-background-image.png")] bg-cover bg-center bg-no-repeat pb-10'>
                 <nav className="flex flex-col items-center w-full" >
                     <div className="flex items-center justify-between p-4 md:px-16 lg:px-24 xl:px-32 md:py-4 w-full">
                         <a href="/">
                             <img
                                 src={logo}
                                 alt="Resume Builder"
-                                className="text-[#000000]"
-                                className="h-10 w-auto"
+                                className="text-[#000000] h-10 w-auto"
                             />
                         </a>
 
