@@ -1,5 +1,5 @@
 import express from "express";
-import { createResume, deleteResume, getPublicResumeById, getResumeById, updateResume } from "../controller/resumeController.js";
+import { createResume, deleteResume, getPublicResumeById, getResumeById, updateResume , downloadResumePDF , getResumeForPDF } from "../controller/resumeController.js";
 import upload from "../configs/multer.js";
 import protect from "../middlewares/authMiddleWare.js";
 
@@ -15,5 +15,7 @@ resumeRouter.put(
 resumeRouter.delete('/delete/:resumeId' , protect , deleteResume);
 resumeRouter.get('/get/:resumeId' , protect , getResumeById);
 resumeRouter.get('/public/:resumeId' , getPublicResumeById);
+resumeRouter.get("/:resumeId/pdf" , protect , downloadResumePDF);
+resumeRouter.get("/pdf-data/:resumeId" , getResumeForPDF);
 
 export default resumeRouter

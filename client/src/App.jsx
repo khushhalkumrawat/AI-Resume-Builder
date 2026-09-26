@@ -12,6 +12,7 @@ import { useEffect } from 'react'
 import { login, setLoading } from "./app/features/authSlice";
 import { useSelector } from 'react-redux'
 import {Toaster} from 'react-hot-toast'
+import PDFPreview from './pages/PDFPreview'
 
 const App = () => {
 
@@ -52,6 +53,7 @@ const App = () => {
         </Route>
 
         <Route path='view/:resumeId' element={<Preview />} />
+        <Route path="pdf-preview/:resumeId" element={<PDFPreview />} />
 
       </Routes>
 

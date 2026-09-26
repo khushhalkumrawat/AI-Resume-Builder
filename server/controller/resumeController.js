@@ -4,6 +4,8 @@
 import imagekit from "../configs/imageKit.js";
 import Resume from "../models/Resume.js";
 import fs from 'fs';
+import puppeteer from "puppeteer";
+import jwt from "jsonwebtoken";
 
 export const createResume = async (req, res) => {
     try {
@@ -144,6 +146,205 @@ export const updateResume = async (req, res) => {
 
         return res.status(400).json({
             message: error.message,
+        });
+    }
+};
+
+export const downloadResumePDF = async (req, res) => {
+    
+    let browser;
+
+    try {
+        const { resumeId } = req.params;
+
+        const userId = req.userId;
+
+        const resume = await Resume.findOne({
+             _id: resumeId,
+             userId,
+        });
+
+        if (!resume) {
+            return res.status(404).json({
+                message: "Resume not found",
+         });
+        }
+
+        if (!resumeId) {
+            return res.status(400).json({
+                message: "Resume ID is required",
+            });
+        }
+
+        const renderToken = jwt.sign(
+          {
+             userId: userId.toString(),
+             resumeId: resumeId.toString(),
+             purpose: "pdf-render",
+          },
+             process.env.JWT_SECRET,
+          {
+             expiresIn: "2m",
+          }
+        );
+
+        console.log("GENERATED RENDER TOKEN:", renderToken);
+
+        browser = await puppeteer.launch({
+            headless: true,
+        });
+
+        const page = await browser.newPage();
+
+        await page.setViewport({
+            width: 794,
+            height: 1123,
+            deviceScaleFactor: 1,
+        });
+
+        const resumeUrl =`${process.env.FRONTEND_URL}/pdf-preview/${resumeId}?renderToken=${renderToken}`;
+
+        console.log("Opening resume:", resumeUrl);
+
+        await page.goto(resumeUrl, {
+            waitUntil: "domcontentloaded",
+        });
+
+          console.log("Page title:", await page.title());
+          console.log("Page URL:", page.url());
+
+          console.log("WAITING FOR RESUME PREVIEW...");
+
+         await page.waitForSelector("#resume-preview", {
+              timeout: 30000,
+              visible: true,
+          });
+
+         console.log("RESUME PREVIEW FOUND!");
+
+        // Wait for fonts
+        await page.evaluate(async () => {
+            await document.fonts.ready;
+        });
+
+        // Wait for images
+        await page.evaluate(async () => {
+            const images = Array.from(document.images);
+
+            await Promise.all(
+                images.map((img) => {
+                    if (img.complete) {
+                        return Promise.resolve();
+                    }
+
+                    return new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                })
+            );
+        });
+
+        console.log("STARTING PDF GENERATION...");
+
+        await page.emulateMediaType("print");
+
+        const pdf = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            preferCSSPageSize: true,
+            margin: {
+                top: "0mm",
+                right: "0mm",
+                bottom: "0mm",
+                left: "0mm",
+            },
+            displayHeaderFooter: false,
+        });
+
+        console.log("PDF GENERATED SUCCESSFULLY!");
+        console.log("PDF SIZE:", pdf.length);
+
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename="resume-${resumeId}.pdf"`,
+            "Content-Length": pdf.length,
+        });
+
+        return res.send(pdf);
+
+    } catch (error) {
+        console.error("PDF Generation error:", error);
+
+        return res.status(500).json({
+            message: "Failed to generate PDF",
+            error: error.message,
+        });
+
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
+    }
+};
+
+//  this is different from pulbic preview , it's independent of public : true
+
+export const getResumeForPDF = async (req, res) => {
+    try {
+        const { resumeId } = req.params;
+        const { token } = req.query;
+
+        console.log("PDF TOKEN RECEIVED:", token);
+        console.log("JWT SECRET EXISTS:", !!process.env.JWT_SECRET);
+
+        if (!resumeId || !token) {
+            return res.status(400).json({
+                message: "Invalid PDF request",
+            });
+        }
+
+       const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET
+        );
+
+        console.log("PDF TOKEN DECODED:", decoded);
+
+        if (decoded.purpose !== "pdf-render") {
+            return res.status(401).json({
+                message: "Invalid render token",
+            });
+        }
+
+        if (decoded.resumeId !== resumeId) {
+            return res.status(403).json({
+                message: "Invalid render token",
+            });
+        }
+
+        const resume = await Resume.findOne({
+            _id: resumeId,
+            userId: decoded.userId,
+        });
+
+        console.log("PDF RESUME FOUND:", !!resume);
+
+        if (!resume) {
+            return res.status(404).json({
+                message: "Resume not found",
+            });
+        }
+
+        return res.status(200).json({
+            resume,
+        });
+
+    } catch (error) {
+        console.error("PDF data error:", error);
+
+        return res.status(401).json({
+            message: "Invalid or expired render token",
         });
     }
 };

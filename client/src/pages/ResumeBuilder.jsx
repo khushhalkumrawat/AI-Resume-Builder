@@ -33,10 +33,7 @@ import { toast } from "react-hot-toast";
 import api from '../configs/api'
 import Achievements from "../components/Achievements";
 import CertificationsForm from "../components/CertificationsForm";
-import html2canvas from "html2canvas-pro";
-import jsPDF from "jspdf";
 import SectionOrder from "../components/SectionOrder";
-import { fitResume, PAGE_HEIGHT } from "../utils/fitResume";
 import { useRef } from "react";
 
 const ResumeBuilder = () => {
@@ -178,111 +175,39 @@ const ResumeBuilder = () => {
     }
   }
 
-  const getResumeHeight = () => {
-    return resumeRef.current?.scrollHeight || 0;
-  };
+const DownloadResume = async () => {
+  try {
+    const response = await api.get(
+      `/api/resumes/${resumeId}/pdf`,
+      {
+        responseType: "blob",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
 
-  const tempDownload = async () => {
-    try {
-      window.print();
-    } catch (error) {
-      toast.error("Failed to download resume.");
-    }
+    const blob = new Blob([response.data], {
+      type: "application/pdf",
+    });
 
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `resume-${resumeId}.pdf`;
+
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error("PDF download error:", error);
+    toast.error("Failed to download resume.");
   }
-  const downloadResume = async () => {
-    try {
-      const resume = document.getElementById("resume-preview");
-
-      if (!resume) {
-        toast.error("Resume preview not found.");
-        return;
-      }
-
-      const canvas = await html2canvas(resume, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: "#fff",
-        width: resume.scrollWidth,
-        height: resume.scrollHeight,
-        windowWidth: resume.scrollWidth,
-        windowHeight: resume.scrollHeight,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pdfWidth = 210;
-      const pdfHeight = 297;
-
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      // const scaleX = pdfWidth / canvas.width;
-      // const scaleY = pdfHeight / canvas.height;
-
-      pdf.addImage(
-        imgData,
-        "PNG",
-        0,
-        0,
-        imgWidth,
-        imgHeight
-      );
-
-      /*
-
-      const addLink = (id, url) => {
-
-        const el = document.getElementById(id);
-
-        if (!el || !url) return;
-
-        const rect = el.getBoundingClientRect();
-
-        const x = rect.left * scaleX;
-        const y = rect.top * scaleY;
-        const w = rect.width * scaleX;
-        const h = rect.height * scaleY;
-
-        pdf.link(x, y, w, h, { url });
-      };
-
-      addLink("email-link", `mailto:${resumeData.personal_info.email}`);
-      addLink("github-link", resumeData.personal_info.github);
-      addLink("linkedin-link", resumeData.personal_info.linkedin);
-      addLink("portfolio-link", resumeData.personal_info.portfolio);
-      addLink("leetcode-link", resumeData.personal_info.leetcode);
-      addLink("codeforces-link", resumeData.personal_info.codeforces);
-      addLink("codechef-link", resumeData.personal_info.codechef);
-      addLink("gfg-link", resumeData.personal_info.geeksforgeeks);
-      addLink("atcoder-link", resumeData.personal_info.atcoder);
-
-      */
-
-      if (isOverflowing) {
-
-        const proceed = window.confirm(
-          "This resume exceeds one A4 page.\n\nIt will be downloaded as a 2-page PDF.\n\nContinue?"
-        );
-
-        if (!proceed) return;
-      }
-
-      pdf.save(`${resumeData.title || "Resume"}.pdf`);
-
-      toast.success("Resume downloaded successfully!");
-
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to download resume.");
-    }
-  };
+};
 
   const saveResume = async () => {
 
@@ -494,8 +419,8 @@ const ResumeBuilder = () => {
                   {resumeData.public ? 'Public' : 'Private'}
                 </button>
 
-                <button onClick={tempDownload} className='lex items-center p-2 px-4 gap-2 text-xs bg-linear-to-br from-purple-100 to-purple-200 text-purple-600 ring-purple-300 rounded-lg hover:ring transition-colors' >
-                  <DownloadIcon className='size-4' /> Download
+                <button onClick={DownloadResume} className='flex items-center p-2 px-4 gap-2 text-xs bg-linear-to-br from-purple-100 to-purple-200 text-purple-600 ring-purple-300 rounded-lg hover:ring transition-colors'>
+                    <DownloadIcon className='size-4' />  Download
                 </button>
 
               </div>
