@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import logo from "../../assets/logo.svg";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { Link } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
 
@@ -76,14 +76,36 @@ const Footer = () => {
                             Ready to create a resume that stands out?
                         </p>
 
+                         <div className="flex flex-col sm:flex-row gap-3 mt-9">
 
-                        <a
-                            href="/login"
-                            className="inline-flex items-center gap-2 mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl transition"
-                        >
-                            Build resume
-                            <ArrowUpRight size={18} />
-                        </a> 
+
+                        {!user && (
+                            <Link
+                                to="/app?state=login"
+                                className="
+                                    group
+                                    relative
+                                    px-8
+                                    py-3.5
+                                    rounded-full
+                                    bg-[#A6FF5D]
+                                    text-gray-900
+                                    font-semibold
+                                    text-sm
+                                    overflow-hidden
+                                    hover:shadow-[0_0_35px_rgba(166,255,93,0.35)]
+                                    hover:-translate-y-0.5
+                                    active:scale-95
+                                    transition-all
+                                "
+                            >
+                                <span className="relative z-10 flex">
+                                    Build Resume <ArrowUpRight />
+                                </span>  
+                            </Link>
+                        )}
+
+                        </div>
 
                     </div>
 
