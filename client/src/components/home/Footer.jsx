@@ -81,7 +81,7 @@ const Footer = () => {
                             href="/login"
                             className="inline-flex items-center gap-2 mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl transition"
                         >
-                            Build Resume
+                            Build resume
                             <ArrowUpRight size={18} />
                         </a> 
 
