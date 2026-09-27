@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import pdfToText from 'react-pdftotext'
 import { LoaderCircleIcon } from 'lucide-react'
+import bgimage from "../assets/DashboardBG.jpg";
 
 const Dashboard = () => {
 
@@ -162,30 +163,75 @@ const Dashboard = () => {
   }, [])
 
   return (
-    <div>
-      <div className='max-w-7xl mx-auto px-4 py-8'>
+     <div className="relative bg-cover bg-center min-h-screen bg-fixed
+             before:absolute before:inset-0 before:bg-black/40
+             before:z-0" style={{ backgroundImage: `url(${bgimage})` }} >
+      <div className='max-w-7xl mx-auto px-4 py-8 '>
 
         <p className='text-2xl font-medium mb-6 bg-linear-to-r from slate-600 to slate-700 bg-clip-text text-transparent sm:hidden '> Welcome  ,Joe Doe </p>
 
         <div className='flex gap-4'>
+   
+     {/* Create Resume Button */}
+     <button onClick={() => setShowCreateResume(true)} className="relative w-full sm:max-w-50 h-60 flex flex-col items-center justify-center rounded-2xl overflow-hidden gap-3 border border-cyan-300/50 bg-linear-to-b from-cyan-500/20 via-slate-900/60 to-slate-950/80 backdrop-blur-md group hover:border-cyan-300 hover:bg-cyan-500/10 hover:shadow-[0_0_30px_rgba(34,211,238,0.25)] hover:-translate-y-1transition-all duration-300  cursor-pointer">
 
-          <button onClick={() => setShowCreateResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
-            <PlusIcon className='size-11 transition-all duration-300 p-2.5 bg-linear-to-br from-indigo-300 to-indigo-500 text-white rounded-full' />
+     {/* Glow */}
+     <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-cyan-400/20 blur-3xl group-hover:bg-cyan-400/30 transition- duration-500 "/>
 
-            <p className=' text-sm group-hover:text-indigo-600 transition-all duration-300' > Create Resume </p>
-          </button>
+     {/* Plus icon */}
+     <div className="relative z-10 size-16 rounded-full flex items-center justify-center bg-cyan-400/15 border border-cyan-300/50 group-hover:bg-cyan-400/25 group-hover:border-cyan-200 group-hover:scale-110 group-hover:rotate-90 transition-all duration-300">
+     <PlusIcon className="size-8 text-cyan-200" />
+      </div>
 
-          <button onClick={() => setShowUploadResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
+     {/* Text */}
+     <div className="relative z-10 text-center">
+        <p className="text-xl font-semibold text-white">Create Resume </p>
 
-            <UploadCloudIcon className='size-11 transition-all duration-300 p-2.5 bg-linear-to-br from-purple-300 to-purple-500 text-white rounded-full' />
+        <p className="mt-1 text-xs text-cyan-200/70"> Start from scratch</p>
+     </div>
 
-            <p className=' text-sm group-hover:text-purple-600 transition-all duration-300' > Upload Existing </p>
-          </button>
+     {/* Bottom accent */}
+     <div className="absolute bottom-0 left-1/2-translate-x-1/2 w-20 h-1 rounded-full bg-cyan-400/60 group-hover:w-32 transition-all duration-300" />
+  </button>
 
+  {/* Upload Resume Button */}
 
-        </div>
+  <button onClick={() => setShowUploadResume(true)} className="relative w-full sm:max-w-50 h-60 flex flex-col items-center justify-center rounded-2xl overflow-hidden gap-3 border border-dashed border-cyan-300/50 bg-linear-to-b from-cyan-500/20 via-slate-900/60 to-slate-950 backdrop-blur-md group hover:border-cyan-300 hover:bg-cyan-500/10 hover:shadow-[0_0_30px_rgba(34,211,238,0.25)] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
 
-        <hr className='border-slate-300 my-6 sm:w-76.25' />
+  {/* Glow */}
+  <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-cyan-400/20 blur-3xl group-hover:bg-cyan-400/30 transition-all duration-500"/>
+
+  {/* Upload icon */}
+  <div className="relative z-10 size-16 rounded-full flex items-center justify-center bg-cyan-400/15 border border-cyan-300/50 group-hover:bg-cyan-400/25 group-hover:border-cyan-200 group-hover:scale-110 transition-all duration-300">
+     <UploadCloudIcon className="size-8 text-cyan-200 group-hover:-translate-y-1 transition-transform duration-300" />
+  </div>
+
+  {/* Text */}
+  <div className="relative z-10 text-center">
+    <p className="text-xl font-semibold text-white">
+      Upload Existing
+    </p>
+
+    <p className="mt-1 text-xs text-cyan-200/70">
+      Import your resume
+    </p>
+  </div>
+
+  {/* Bottom accent */}
+  <div
+    className="absolute bottom-0 left-1/2-translate-x-1/2 w-20 h-1 rounded-full bg-cyan-400/60 group-hover:w-32 transition-all duration-300"/>
+</button>
+  </div>
+
+    <hr className="
+  my-8
+  h-px
+  border-0
+  bg-linear-to-r
+  from-transparent
+  via-cyan-400/50
+  to-transparent
+" />
 
         <div className='grid grid-cols-2 sm:flex flex-wrap gap-4'>
 
@@ -193,21 +239,121 @@ const Dashboard = () => {
             const baseColor = colors[index % colors.length];
 
             return (
-              <button key={index} onClick={() => navigate(`/app/builder/${resume._id}`)} className='relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer' style={{
-                background: 'linear-gradient(135deg , ${baseColor}10 , ${baseColor}40)', borderColor: baseColor + '40'
-              }}>
+   <button
+  key={index}
+  onClick={() => navigate(`/app/builder/${resume._id}`)}
+  className="
+    relative w-full sm:max-w-50 h-60
+    flex flex-col items-center justify-center
+    rounded-2xl overflow-hidden
+    border border-emerald-400/40
+    bg-linear-to-b
+    from-emerald-900/60
+    via-slate-900/80
+    to-slate-950/90
+    backdrop-blur-md
+    group
+    hover:border-emerald-300/70
+    hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]
+    hover:-translate-y-1
+    transition-all duration-300
+    cursor-pointer
+  "
+>
 
-                <FilePenLineIcon className='size-7 group-hover:scale-105 transition-all' style={{ color: baseColor }} />
-                <p className='text-sm group-hover:scale-105 transition-all px-2 text-center' style={{ color: baseColor }}> {resume.title} </p>
+  {/* Background glow */}
+  <div
+  className="
+    absolute -top-20 -right-20
+    w-40 h-40
+    rounded-full
+    bg-emerald-500/20
+    blur-3xl
+    group-hover:bg-emerald-400/30
+    transition-all duration-500
+  "
+/>
 
-                <p className='absolute bottom-1 text-[11px] text-slate-400 group-hover:text-slate-500 transition-all duration-300 px-2 text-center' style={{ color: baseColor + '90' }} > Updated on {new Date(resume.updatedAt).toLocaleDateString()} </p>
+  {/* Resume icon */}
+ <div
+  className="
+    relative z-10
+    size-16
+    rounded-full
+    flex items-center justify-center
+    bg-emerald-500/15
+    border border-emerald-400/40
+    group-hover:scale-110
+    group-hover:bg-emerald-500/25
+    transition-all duration-300
+  "
+>
+  <FilePenLineIcon className="size-8 text-emerald-300" />
+</div>
 
-                <div onClick={(e) => e.stopPropagation()} className='absolute top-1 right-1 group-hover:flex items-center hidden'>
+  {/* Resume title */}
+  <p className="
+  relative z-10
+  mt-5
+  text-xl
+  font-semibold
+  text-white
+  text-center
+  px-3
+  max-w-full
+  truncate
+">
+  {resume.title}
+</p>
 
-                  <TrashIcon onClick={() => deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors ' />
-                  <PencilIcon onClick={() => { setEditResumeId(resume._id); setTitle(resume.title) }} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
+  {/* Updated date */}
+  <p className="
+  absolute bottom-3
+  left-0 right-0
+  text-xs
+  text-emerald-200/70
+  text-center
+">
+  Updated on {new Date(resume.updatedAt).toLocaleDateString()}
+</p>
 
-                </div>
+  {/* Edit/Delete buttons */}
+  <div
+    onClick={(e) => e.stopPropagation()}
+    className="
+      absolute top-2 right-2
+      hidden group-hover:flex
+      items-center gap-1
+      z-20
+    "
+  >
+    <TrashIcon
+      onClick={() => deleteResume(resume._id)}
+      className="
+        size-7 p-1.5
+        bg-black/60
+        text-white
+        hover:bg-red-500
+        rounded
+        transition-colors
+      "
+    />
+
+    <PencilIcon
+      onClick={() => {
+        setEditResumeId(resume._id);
+        setTitle(resume.title);
+      }}
+      className="
+        size-7 p-1.5
+        bg-black/60
+        text-white
+        hover:bg-indigo-500
+        rounded
+        transition-colors
+      "
+    />
+  </div>
 
               </button>
             )
