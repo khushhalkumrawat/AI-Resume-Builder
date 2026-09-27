@@ -1,8 +1,12 @@
 import { ArrowUpRight } from "lucide-react";
 import logo from "../../assets/logo.svg";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { Link } from "lucide-react";
 
 const Footer = () => {
+
+     const { user } = useSelector((state) => state.auth);
     
     return (
         <footer
@@ -72,13 +76,15 @@ const Footer = () => {
                             Ready to create a resume that stands out?
                         </p>
 
+
                         <a
-                            href="/"
+                            href="/login"
                             className="inline-flex items-center gap-2 mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl transition"
                         >
                             Build Resume
                             <ArrowUpRight size={18} />
-                        </a>
+                        </a> 
+
                     </div>
 
                 </div>
