@@ -200,7 +200,7 @@ export const downloadResumePDF = async (req, res) => {
         await page.setViewport({
             width: 794,
             height: 1123,
-            deviceScaleFactor: 1,
+            deviceScaleFactor: 2,
         });
 
         const resumeUrl =`${process.env.FRONTEND_URL}/pdf-preview/${resumeId}?renderToken=${renderToken}`;
@@ -208,7 +208,7 @@ export const downloadResumePDF = async (req, res) => {
         console.log("Opening resume:", resumeUrl);
 
         await page.goto(resumeUrl, {
-            waitUntil: "domcontentloaded",
+            waitUntil: "networkidle0",
         });
 
           console.log("Page title:", await page.title());
@@ -233,7 +233,13 @@ export const downloadResumePDF = async (req, res) => {
 
         // Wait for fonts
         await page.evaluate(async () => {
-            await document.fonts.ready;
+            if (document.fonts) {
+                await document.fonts.ready;
+
+                await Promise.all(
+                     [...document.fonts].map(font => font.loaded)
+                );
+            }
         });
 
         // Wait for images
@@ -269,6 +275,10 @@ export const downloadResumePDF = async (req, res) => {
                 left: "0mm",
             },
             displayHeaderFooter: false,
+            scale:1,
+            pageRanges: "",
+            tagged: true,
+            outline: true,
         });
 
         console.log("PDF GENERATED SUCCESSFULLY!");

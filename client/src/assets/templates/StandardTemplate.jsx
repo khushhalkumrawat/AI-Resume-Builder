@@ -560,6 +560,30 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
                 </a>
             )}
 
+             {data?.personal_info?.codechef && (
+                <a
+                    href={formatUrl(data.personal_info.codechef)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1"
+                >
+                <Code2 size={11} strokeWidth={1.8} />
+                <span>CodeChef</span>
+                </a>
+            )}
+
+             {data?.personal_info?.atcoder && (
+                <a
+                    href={formatUrl(data.personal_info.atcoder)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1"
+                >
+                <Code2 size={11} strokeWidth={1.8} />
+                <span>AtCoder</span>
+                </a>
+            )}
+
             {data?.personal_info?.geeksforgeeks && (
                 <a
                 href={formatUrl(data.personal_info.geeksforgeeks)}

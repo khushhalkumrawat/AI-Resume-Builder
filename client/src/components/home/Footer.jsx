@@ -1,12 +1,11 @@
 import { ArrowUpRight } from "lucide-react";
-import logo from "../../assets/logo.svg";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
 
-     const { user } = useSelector((state) => state.auth);
+     const { user } = useSelector((state) => state.auth); 
     
     return (
         <footer
@@ -19,9 +18,6 @@ const Footer = () => {
 
                     {/* Left */}
                     <div>
-                        {/* Replace with your logo if available */}
-                        {/* <img src={logo} className="h-9 mb-5" alt="" /> */}
-
                         <h2 className="text-2xl font-bold text-gray-900">
                             Resume<span className="text-green-600">Builder</span>
                         </h2>

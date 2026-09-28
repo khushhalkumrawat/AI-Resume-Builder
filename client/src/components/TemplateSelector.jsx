@@ -7,30 +7,20 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
 
     const templates = [
         {
-            id: "modern",
-            name: "Modern",
-            preview: "Sleek design with strategic use of color and modern font choices",
+            id: "standard",
+            name: "Standard",
+            preview : "Most Recognized & used Template in Industry",
         },
         {
-            id: "minimal-image",
-            name: "Minimal Image",
-            preview: "Minimal design with a single image and clean typography",
-        },
-        {
-            id: "minimal",
-            name: "Minimal",
-            preview: "Ultra-clean design that puts your content front and center",
+            id:"elite",
+            name:"Elite",
+            preview : "A minimal academic design that keeps your strongest qualifications easy to find",
         },
         {
             id: "popular",
-            name: "popular",
+            name: "Popular",
             preview: "Ultra-clean design , used frequently",
         },
-        {
-            id: "standard",
-            name: "standard",
-            preview : "Most Recognized & used Template in Industry",
-        }
     ]
 
     return (
