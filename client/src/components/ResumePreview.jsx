@@ -1,18 +1,18 @@
 import React from 'react'
-import ClassicTemplate from '../assets/templates/ClassicTemplate'
 import ModernTemplate from '../assets/templates/ModernTemplate'
 import MinimalTemplate from '../assets/templates/MinimalTemplate'
 import MinimalImageTemplate from '../assets/templates/MinimalImageTemplate'
 import PopularTemplate from '../assets/templates/PopularTemplate'
+import StandardTemplate from '../assets/templates/StandardTemplate'
 import { forwardRef } from "react";
 
 const ResumePreview = forwardRef(({ data, template, accentColor, sectionOrder, classes = "", }, ref) => {
 
   const renderTemplate = () => {
 
+    console.log("PDF/Preview template:", template);
+
     switch (template) {
-      case "classic":
-        return <ClassicTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
       case "minimal":
         return <MinimalTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
       case "minimal-image":
@@ -21,10 +21,13 @@ const ResumePreview = forwardRef(({ data, template, accentColor, sectionOrder, c
         return <PopularTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />
       case "modern":
         return <ModernTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} /> 
+      case "standard":
+        return <StandardTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />  
 
       default:
-        return <PopularTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />;
+        return <PopularTemplate data={data} accentColor={accentColor} sectionOrder={sectionOrder} />
     }
+    
 
   }
 

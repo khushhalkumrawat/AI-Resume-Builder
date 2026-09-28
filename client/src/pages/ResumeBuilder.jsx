@@ -79,7 +79,7 @@ const ResumeBuilder = () => {
     skills: [],
     achievements: [],
     certifications: [],
-    template: "classic",
+    template: "popular",
     accent_color: "#3B82F6",
     public: false,
     sectionOrder: [

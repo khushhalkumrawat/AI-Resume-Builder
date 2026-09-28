@@ -190,7 +190,7 @@ export const downloadResumePDF = async (req, res) => {
 
         console.log("GENERATED RENDER TOKEN:", renderToken);
 
-        const browser = await puppeteer.launch({
+        browser = await puppeteer.launch({
             headless: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
         });
@@ -330,6 +330,8 @@ export const getResumeForPDF = async (req, res) => {
         });
 
         console.log("PDF RESUME FOUND:", !!resume);
+        console.log("PDF TEMPLATE FROM DB:", resume?.template);
+        console.log("PDF RESUME OBJECT:", resume);
 
         if (!resume) {
             return res.status(404).json({
