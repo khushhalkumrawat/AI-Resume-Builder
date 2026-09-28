@@ -163,17 +163,18 @@ const ResumeBuilder = () => {
     }
   }
 
-  const handleShare = () => {
-    const frontendUrl = window.location.href.split('/app/')[0];
-    const resumeUrl = frontendUrl + '/view/' + resumeId;
+ const handleShare = () => {
+  const resumeUrl = `${window.location.origin}/view/${resumeId}`;
 
-    if (navigator.share) {
-      navigator.share({ url: resumeUrl, text: "My Resume", })
-    }
-    else {
-      toast.error('Share not supported on this browser. ')
-    }
+  if (navigator.share) {
+    navigator.share({
+      url: resumeUrl,
+      text: "My Resume",
+    });
+  } else {
+    toast.error("Share not supported on this browser.");
   }
+};
 
 const DownloadResume = async () => {
   try {

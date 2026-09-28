@@ -1,6 +1,4 @@
 node_modules
-<<<<<<< HEAD
-=======
 dist
 dist-ssr
 *.local
@@ -15,5 +13,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
->>>>>>> d453cae5d7cb3e98a6c9104d88337bfe4a5386eb
 .env
