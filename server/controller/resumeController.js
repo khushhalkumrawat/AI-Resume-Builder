@@ -190,13 +190,9 @@ export const downloadResumePDF = async (req, res) => {
 
         console.log("GENERATED RENDER TOKEN:", renderToken);
 
-        browser = await puppeteer.launch({
+        const browser = await puppeteer.launch({
             headless: true,
-            args: [
-              "--no-sandbox",
-              "--disable-setuid-sandbox",
-              "--disable-dev-shm-usage",
-                 ],
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
         });
 
         const page = await browser.newPage();

@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "server": "node server.js",
     "start": "node server.js",
-    "server": "node server.js"
+    "build": "npm install && npx puppeteer browsers install chrome --path ./puppeteer-cache"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

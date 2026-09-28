@@ -39,6 +39,7 @@ import { useRef } from "react";
 const ResumeBuilder = () => {
 
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
   const checkResumeOverflow = () => {
 
@@ -196,7 +197,7 @@ const DownloadResume = async () => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = `resume-${resumeId}.pdf`;
+    link.download = `${user?.name}-Resume.pdf`;
 
     document.body.appendChild(link);
     link.click();
