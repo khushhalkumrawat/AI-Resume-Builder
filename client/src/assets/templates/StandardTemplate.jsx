@@ -433,7 +433,6 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
 
   return (
     <div
-      id="resume-preview"
       className="
         w-[210mm]
         min-h-[297mm]

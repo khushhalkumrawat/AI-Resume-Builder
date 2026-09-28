@@ -221,7 +221,15 @@ export const downloadResumePDF = async (req, res) => {
               visible: true,
           });
 
-         console.log("RESUME PREVIEW FOUND!");
+          await page.waitForFunction(   () => {
+                const element = document.querySelector("#resume-preview");
+                return element && element.dataset.template;
+            },{ timeout: 30000 }
+          );
+
+        console.log("TEMPLATE LOADED:", await page.$eval("#resume-preview",(el) => el.dataset.template));
+
+        console.log("RESUME PREVIEW FOUND!");
 
         // Wait for fonts
         await page.evaluate(async () => {

@@ -35,7 +35,7 @@ const ResumePreview = forwardRef(({ data, template, accentColor, sectionOrder, c
 return (
   <div
    className="w-full bg-gray-100" >
-    <div ref={ref} id="resume-preview" className={`border border-gray-200 shadow ${classes}`}>
+    <div ref={ref} id="resume-preview" data-template={template} className={`border border-gray-200 shadow ${classes}`}>
       {renderTemplate()}
     </div>
 
@@ -48,52 +48,48 @@ return (
 
     @media print {
 
-      html,
-      body {
-        width: 210mm;
-        margin: 0;
-        padding: 0;
-        background: white !important;
-      }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+  }
 
-      body {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
-      body * {
-        visibility: hidden;
-      }
+  body * {
+    visibility: hidden;
+  }
 
-      #resume-preview,
-      #resume-preview * {
-        visibility: visible;
-      }
+  #resume-preview,
+  #resume-preview * {
+    visibility: visible;
+  }
 
-      #resume-preview {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 210mm !important;
-        min-height: 297mm;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        background: white !important;
-      }
+  #resume-preview {
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
 
-      /* Don't cut content when resume is longer than one page */
-      #resume-preview {
-        overflow: visible !important;
-        height: auto !important;
-      }
+  #resume-preview {
+    overflow: visible !important;
+    height: auto !important;
+  }
 
-      /* Keep sections together when possible */
-      #resume-preview section {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
+  #resume-preview section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #resume-preview a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
 
       /* Don't split individual experience/project/education blocks */
       #resume-preview .resume-section,

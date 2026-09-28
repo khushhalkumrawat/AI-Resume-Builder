@@ -52,6 +52,8 @@ const ResumeBuilder = () => {
   };
 
   const resumeRef = useRef(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const saveTimerRef = useRef(null);
 
   const defaultSectionOrder = [
     { id: "summary", label: "Professional Summary" },
@@ -79,7 +81,7 @@ const ResumeBuilder = () => {
     skills: [],
     achievements: [],
     certifications: [],
-    template: "popular",
+    template: "standard",
     accent_color: "#3B82F6",
     public: false,
     sectionOrder: [
@@ -134,6 +136,24 @@ const ResumeBuilder = () => {
   useEffect(() => {
     loadExistingResume();
   }, [resumeId]);
+
+  useEffect(() => {
+  if (!isDirty) return;
+
+  if (saveTimerRef.current) {
+    clearTimeout(saveTimerRef.current);
+  }
+
+  saveTimerRef.current = setTimeout(() => {
+    saveResume(true);
+  }, 1500);
+
+  return () => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+  };
+}, [isDirty]);
 
   useEffect(() => {
 
@@ -211,42 +231,62 @@ const DownloadResume = async () => {
   }
 };
 
-  const saveResume = async () => {
+ const saveResume = async (isAutoSave = false) => {
 
-    console.log("Save resume function frontend id", resumeId);
+  console.log("Save resume function frontend id", resumeId);
 
-    try {
+  try {
 
-      let updatedResumeData = structuredClone(resumeData);
+    let updatedResumeData = structuredClone(resumeData);
 
-      // remove image from updatedResumeData
+    // remove image from updatedResumeData
+    if (typeof resumeData.personal_info.image === 'object') {
+      delete updatedResumeData.personal_info.image;
+    }
 
+    console.log("JSON PROBLEM FINDING ->");
+    console.log(updatedResumeData.project);
+    console.log(typeof updatedResumeData.project);
+    console.log(Array.isArray(updatedResumeData.project));
 
-      if (typeof resumeData.personal_info.image === 'object') {
-        delete updatedResumeData.personal_info.image;
+    const formData = new FormData();
+    formData.append("resumeId", resumeId);
+    formData.append("resumeData", JSON.stringify(updatedResumeData));
+
+    removeBackground &&
+      formData.append("removeBackground", true);
+
+    typeof resumeData.personal_info.image === 'object' &&
+      formData.append("image", resumeData.personal_info.image);
+
+    const { data } = await api.put(
+      '/api/resumes/update',
+      formData,
+      {
+        headers: {
+          Authorization: token
+        }
       }
+    );
 
-      console.log("JSON PROBLEM FINDING ->")
+    setResumeData(data.resume);
+    setIsDirty(false);
 
-      console.log(updatedResumeData.project);
-      console.log(typeof updatedResumeData.project);
-      console.log(Array.isArray(updatedResumeData.project));
+    // Only show toast for manual save
+    if (!isAutoSave) {
+      toast.success(data.message);
+    }
 
-      const formData = new FormData();
-      formData.append("resumeId", resumeId);
-      formData.append("resumeData", JSON.stringify(updatedResumeData));
-      removeBackground && formData.append("removeBackground", true);
-      typeof resumeData.personal_info.image === 'object' && formData.append("image", resumeData.personal_info.image);
+  } catch (error) {
 
-      const { data } = await api.put('/api/resumes/update', formData, { headers: { Authorization: token } })
+    console.error("Save resume error:", error);
 
-      setResumeData(data.resume);
-      toast.success(data.message)
-
-    } catch (error) {
+    if (!isAutoSave) {
       toast.error("Unable to save your resume. Please try again.");
     }
+
   }
+};
 
   return (
     <div className="px-4 py-4">
@@ -284,7 +324,8 @@ const DownloadResume = async () => {
                 {/* Template Change Option */}
                 <div className='flex items-center gap-2 '>
 
-                  <TemplateSelector selectedTemplate={resumeData.template} onChange={(template) => setResumeData(prev => ({ ...prev, template }))} />
+                  <TemplateSelector selectedTemplate={resumeData.template} onChange={(template) => {
+                      setResumeData(prev => ({ ...prev, template })); setIsDirty(true); }} />
 
                   <ColorPicker selectedColor={resumeData.accent_color} onChange={(color) => setResumeData(prev => ({ ...prev, accent_color: color }))} />
 

@@ -29,6 +29,8 @@ const PDFPreview = () => {
                     }
                 );
 
+                console.log("PDFPreview RECEIVED TEMPLATE:", data.resume?.template);
+
                 setResumeData(data.resume);
 
             } catch (error) {
