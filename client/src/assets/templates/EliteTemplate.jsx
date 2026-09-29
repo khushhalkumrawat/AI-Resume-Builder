@@ -574,12 +574,10 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
             fontFamily: '"Times New Roman", Times, serif',
             fontSize: `${data?.font_size || 10.5}px`,
             lineHeight: data?.line_height || 1.12,
-
             transform: `scale(${scale})`,
             transformOrigin: "top left",
-
-            // Prevent scaled content from affecting page layout
             height: `${297 / scale}mm`,
+            overflow:"hidden",
           }}
         >
           {/* ================= HEADER ================= */}

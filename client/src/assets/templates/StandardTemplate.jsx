@@ -5,7 +5,6 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { useRef } from "react";
 import { useEffect } from "react";
-import { useState } from "react";
 
 const StandardTemplate = ({ data, sectionOrder = [] }) => {
 
@@ -540,7 +539,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
             lineHeight: data?.line_height || 1.18,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
-            height:"297mm",
+            height: `${297 / scale}mm`,
             overflow:"hidden",
          }}
         >

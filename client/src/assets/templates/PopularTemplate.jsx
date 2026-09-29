@@ -435,7 +435,7 @@ const ProfessionalGrayTemplate = ({ data, sectionOrder = [] }) => {
       >
         <div
           ref={resumeRef}
-          className="standard-resume"
+          className="popular-resume"
           style={{
             padding: "5mm 5mm",
             fontFamily: "Inter, Arial, sans-serif",
@@ -444,7 +444,7 @@ const ProfessionalGrayTemplate = ({ data, sectionOrder = [] }) => {
             color: "#374151",
             transform: `scale(${scale})`,
             transformOrigin: "top left",
-            height: "297mm",
+            height: `${297 / scale}mm`,
             overflow: "hidden",
           }}
         >
