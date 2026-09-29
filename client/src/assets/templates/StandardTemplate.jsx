@@ -1,16 +1,50 @@
-import { Layout , Check , FileText } from 'lucide-react'
-import React, { useState } from 'react'
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Globe,
-  Code2,
-} from "lucide-react";
+import { Layout, Check, FileText } from "lucide-react";
+import React, { useState } from "react";
+import { Phone, Mail, MapPin, Globe, Code2 } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const StandardTemplate = ({ data, sectionOrder = [] }) => {
+
+  const resumeRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const calculateScale = () => {
+      if (!resumeRef.current) return;
+
+      // A4 height at 96 DPI
+      const A4_HEIGHT_PX = 1100;
+
+      const contentHeight = resumeRef.current.scrollHeight;
+
+      if (contentHeight <= A4_HEIGHT_PX) {
+        setScale(1);
+        return;
+      }
+
+      // Small safety margin so Puppeteer doesn't create page 2
+      const availableHeight = A4_HEIGHT_PX - 20;
+
+      const calculatedScale = availableHeight / contentHeight;
+
+      // Don't scale above 1
+      setScale(Math.min(1, calculatedScale));
+    };
+
+    // Wait until fonts/images/layout are rendered
+    const timer = setTimeout(calculateScale, 100);
+
+    window.addEventListener("resize", calculateScale);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", calculateScale);
+    };
+  }, [data, sectionOrder]);
 
   const formatUrl = (url) => {
     if (!url) return "";
@@ -18,6 +52,24 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
       ? url
       : `https://${url}`;
   };
+
+  const profileLinks = [
+    {
+      key: "linkedin",
+      label: "LinkedIn",
+      icon: FaLinkedin,
+    },
+    {
+      key: "github",
+      label: "GitHub",
+      icon: FaGithub,
+    },
+    {
+      key: "portfolio",
+      label: "Portfolio",
+      icon: Globe,
+    },
+  ];
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -39,9 +91,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
   const getDateRange = (item) => {
     if (!item) return "";
 
-    const start = formatDate(
-      item.start_date || item.startDate
-    );
+    const start = formatDate(item.start_date || item.startDate);
 
     const end = item.is_current
       ? "Present"
@@ -125,9 +175,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
                 </div>
 
                 {edu.graduation_date && (
-                  <div className="whitespace-nowrap">
-                    {edu.graduation_date}
-                  </div>
+                  <div className="whitespace-nowrap">{edu.graduation_date}</div>
                 )}
               </div>
 
@@ -144,9 +192,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
                 </div>
 
                 {edu.gpa && (
-                  <div className="whitespace-nowrap">
-                    CGPA: {edu.gpa}
-                  </div>
+                  <div className="whitespace-nowrap">CGPA: {edu.gpa}</div>
                 )}
               </div>
             </div>
@@ -169,13 +215,8 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
 
         <div className="space-y-[2px]">
           {data.skills.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-start"
-            >
-              <span className="font-bold min-w-[185px]">
-                {item.category}:
-              </span>
+            <div key={index} className="flex items-start">
+              <span className="font-bold min-w-[185px]">{item.category}:</span>
 
               <span>
                 {Array.isArray(item.skills)
@@ -205,9 +246,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
             <div key={index}>
               <div className="flex justify-between items-start gap-4">
                 <div>
-                  <span className="font-bold">
-                    {exp.company}
-                  </span>
+                  <span className="font-bold">{exp.company}</span>
 
                   {exp.location && (
                     <span>
@@ -217,9 +256,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
                   )}
                 </div>
 
-                <span className="whitespace-nowrap">
-                  {getDateRange(exp)}
-                </span>
+                <span className="whitespace-nowrap">{getDateRange(exp)}</span>
               </div>
 
               <div className="italic">
@@ -256,10 +293,8 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
           {data.project.map((project, index) => (
             <div key={index}>
               <div className="flex justify-between items-start gap-4">
-                <div className='flex'>
-                  <span className="font-bold">
-                    {project.name}
-                  </span>
+                <div className="flex">
+                  <span className="font-bold">{project.name}</span>
 
                   {project.type && (
                     <span className="italic">
@@ -299,8 +334,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
                   )}
                 </div>
 
-                {(project.start_date ||
-                  project.end_date) && (
+                {(project.start_date || project.end_date) && (
                   <span className="whitespace-nowrap">
                     {getDateRange(project)}
                   </span>
@@ -311,9 +345,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
 
               {project.tech_stack && (
                 <div className="mt-[1px]">
-                  <span className="font-bold">
-                    Technologies / Tools Used:
-                  </span>{" "}
+                  <span className="font-bold">Technologies / Tools Used:</span>{" "}
                   {project.tech_stack}
                 </div>
               )}
@@ -337,9 +369,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
 
         <ul className="list-disc ml-5 space-y-[1px]">
           {data.achievements.map((achievement, index) => (
-            <li key={index}>
-              {achievement}
-            </li>
+            <li key={index}>{achievement}</li>
           ))}
         </ul>
       </section>
@@ -362,9 +392,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
             <div key={index}>
               <div className="flex justify-between gap-4">
                 <div>
-                  <span className="font-bold">
-                    {cert.name}
-                  </span>
+                  <span className="font-bold">{cert.name}</span>
 
                   {cert.issuer && (
                     <span>
@@ -375,9 +403,7 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
                 </div>
 
                 {cert.issue_date && (
-                  <span className="whitespace-nowrap">
-                    {cert.issue_date}
-                  </span>
+                  <span className="whitespace-nowrap">{cert.issue_date}</span>
                 )}
               </div>
 
@@ -423,199 +449,212 @@ const StandardTemplate = ({ data, sectionOrder = [] }) => {
   ];
 
   const finalSectionOrder =
-    sectionOrder?.length > 0
-      ? sectionOrder
-      : defaultOrder;
+    sectionOrder?.length > 0 ? sectionOrder : defaultOrder;
 
   /* =========================
      TEMPLATE
   ========================= */
 
   return (
-    <div
-      className="
-        w-[210mm]
-        min-h-[297mm]
-        mx-auto
-        bg-white
-        text-black
-        px-[16mm]
-        py-[12mm]
+    <>
+      <style>
+        {`
+        @page {
+          size: A4;
+          margin: 0;
+        }
+
+        html,
+        body {
+          margin: 0 !important;
+          padding: 0 !important;
+          background: white !important;
+        }
+
+        * {
+          box-sizing: border-box;
+        }
+
+        .standard-page {
+          width: 210mm;
+          height: 297mm;
+          overflow: hidden;
+          background: white;
+        }
+
+        .standard-resume {
+          width: 210mm;
+          background: white;
+        }
+
+        .break-inside-avoid {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        @media print {
+          html,
+          body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background: white !important;
+          }
+
+          .standard-page {
+            width: 210mm;
+            height: 297mm;
+            overflow: hidden;
+            margin: 0 !important;
+          }
+
+          *,
+          *::before,
+          *::after {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+      `}
+      </style>
+
+      <div
+        className="standard-page"
+        style={{
+          margin: "0 auto",
+          position: "relative",
+        }}
+      >
+        <div
+          ref={resumeRef}
+          className="        
+        standard-resume
       "
-      style={{
-        fontFamily: '"Times New Roman", Times, serif',
-        fontSize: `${data?.font_size || 11}px`,
-        lineHeight: data?.line_height || 1.18,
-      }}
-    >
-      {/* ================= HEADER ================= */}
+          style={{
+            padding: "5mm 5mm",
+            color: "#000",
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: `${data?.font_size || 11}px`,
+            lineHeight: data?.line_height || 1.18,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            height:"297mm",
+            overflow:"hidden",
+         }}
+        >
+          {/* ================= HEADER ================= */}
 
-    
-      <header className="text-center mb-2">
-
-        <div className = "flex items-center justify-center">
-
-             {data?.personal_info?.full_name && (
+          <header className="text-center mb-2">
+            <div className="flex items-center justify-center">
+              {data?.personal_info?.full_name && (
                 <h1 className="text-[25px] font-bold uppercase leading-none mb-1">
-                {data.personal_info.full_name}
-            </h1>
-            )}
+                  {data.personal_info.full_name}
+                </h1>
+              )}
 
-            <h1 className='h-100px'> | </h1>
+              <h1 className="h-100px"> | </h1>
 
-            {data?.personal_info?.profession && (
+              {data?.personal_info?.profession && (
                 <div className="text-[20px] italic">
-                {data.personal_info.profession}
+                  {data.personal_info.profession}
+                </div>
+              )}
             </div>
-            )}
 
-        </div>
-
-        <div className="flex justify-center flex-wrap items-center gap-x-3 gap-y-1 text-[10.5px]">
-
-            {data?.personal_info?.phone && (
+            <div className="flex justify-center flex-wrap items-center gap-x-3 gap-y-1 text-[10.5px]">
+              {data?.personal_info?.phone && (
                 <a
-                    href={`tel:${data.personal_info.phone}`}
-                    className="flex items-center gap-1"
+                  href={`tel:${data.personal_info.phone}`}
+                  className="flex items-center gap-1"
                 >
-                <Phone size={11} strokeWidth={1.8} />
-                    <span>{data.personal_info.phone}</span>
+                  <Phone size={11} strokeWidth={1.8} />
+                  <span>{data.personal_info.phone}</span>
                 </a>
-            )}
+              )}
 
-            {data?.personal_info?.email && (
+              {data?.personal_info?.email && (
                 <a
-                    href={`mailto:${data.personal_info.email}`}
-                    className="flex items-center gap-1"
+                  href={`mailto:${data.personal_info.email}`}
+                  className="flex items-center gap-1"
                 >
-                <Mail size={11} strokeWidth={1.8} />
-                <span>{data.personal_info.email}</span>
+                  <Mail size={11} strokeWidth={1.8} />
+                  <span>{data.personal_info.email}</span>
                 </a>
-            )}
+              )}
 
-            {data?.personal_info?.location && (
+              {data?.personal_info?.location && (
                 <span className="flex items-center gap-1">
-                <MapPin size={11} strokeWidth={1.8} />
-                <span>{data.personal_info.location}</span>
-            </span>
-            )}
+                  <MapPin size={11} strokeWidth={1.8} />
+                  <span>{data.personal_info.location}</span>
+                </span>
+              )}
 
-            {data?.personal_info?.linkedin && (
-                <a
-                    href={formatUrl(data.personal_info.linkedin)}
+              {/* Fixed Professional Profiles */}
+
+              {profileLinks.map((profile) => {
+                const url = data?.personal_info?.[profile.key];
+
+                if (!url) return null;
+
+                const Icon = profile.icon;
+
+                return (
+                  <a
+                    key={profile.key}
+                    href={formatUrl(url)}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1"
-                >
-            <FaLinkedin size={11} strokeWidth={1.8} />
-            <span>LinkedIn</span>
-            </a>
-            )}
+                  >
+                    <Icon size={11} />
+                    <span>{profile.label}</span>
+                  </a>
+                );
+              })}
 
-            {data?.personal_info?.github && (
-                <a
-                    href={formatUrl(data.personal_info.github)}
+              {/* Custom Professional Profiles */}
+
+              {data?.personal_info?.custom_profiles?.map((profile, index) => {
+                if (!profile?.name || !profile?.url) {
+                  return null;
+                }
+
+                return (
+                  <a
+                    key={`custom-profile-${index}`}
+                    href={formatUrl(profile.url)}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1"
-                >
-                <FaGithub size={11} strokeWidth={1.8} />
-                <span>GitHub</span>
-                </a>
-            )}
-
-            {data?.personal_info?.portfolio && (
-                <a
-                href={formatUrl(data.personal_info.portfolio)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1"
-            >
-            <Globe size={11} strokeWidth={1.8} />
-            <span>Portfolio</span>
-            </a>
-            )}
-
-            {data?.personal_info?.leetcode && (
-            <a
-                href={formatUrl(data.personal_info.leetcode)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1"
-            >
-            <Code2 size={11} strokeWidth={1.8} />
-            <span>LeetCode</span>
-            </a>
-            )}
-
-            {data?.personal_info?.codeforces && (
-                <a
-                    href={formatUrl(data.personal_info.codeforces)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1"
-                >
-                <Code2 size={11} strokeWidth={1.8} />
-                <span>Codeforces</span>
-                </a>
-            )}
-
-             {data?.personal_info?.codechef && (
-                <a
-                    href={formatUrl(data.personal_info.codechef)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1"
-                >
-                <Code2 size={11} strokeWidth={1.8} />
-                <span>CodeChef</span>
-                </a>
-            )}
-
-             {data?.personal_info?.atcoder && (
-                <a
-                    href={formatUrl(data.personal_info.atcoder)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1"
-                >
-                <Code2 size={11} strokeWidth={1.8} />
-                <span>AtCoder</span>
-                </a>
-            )}
-
-            {data?.personal_info?.geeksforgeeks && (
-                <a
-                href={formatUrl(data.personal_info.geeksforgeeks)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1"
-                >
-                <Code2 size={11} strokeWidth={1.8} />
-                <span>GeeksForGeeks</span>
-                </a>
-                )}
-
+                  >
+                    <Globe size={11} strokeWidth={1.8} />
+                    <span>{profile.name}</span>
+                  </a>
+                );
+              })}
             </div>
-      </header>
+          </header>
 
-      {/* ================= SECTIONS ================= */}
+          {/* ================= SECTIONS ================= */}
 
-      <main>
-        {finalSectionOrder.map((section, index) => {
-          const render =
-            sectionComponents[section.id];
+          <main>
+            {finalSectionOrder.map((section, index) => {
+              const render = sectionComponents[section.id];
 
-          if (!render) return null;
+              if (!render) return null;
 
-          return (
-            <React.Fragment key={section.id || index}>
-              {render()}
-            </React.Fragment>
-          );
-        })}
-      </main>
-    </div>
+              return (
+                <React.Fragment key={section.id || index}>
+                  {render()}
+                </React.Fragment>
+              );
+            })}
+          </main>
+        </div>
+      </div>
+    </>
   );
 };
 

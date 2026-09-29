@@ -200,7 +200,7 @@ export const downloadResumePDF = async (req, res) => {
         await page.setViewport({
             width: 794,
             height: 1123,
-            deviceScaleFactor: 2,
+            deviceScaleFactor: 1,
         });
 
         const resumeUrl =`${process.env.FRONTEND_URL}/pdf-preview/${resumeId}?renderToken=${renderToken}`;

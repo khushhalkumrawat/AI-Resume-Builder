@@ -1,19 +1,53 @@
 import React from "react";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Globe,
-  Code2,
-  ExternalLink,
-} from "lucide-react";
+import { Phone, Mail, MapPin, Globe, Code2, ExternalLink } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const EliteTemplate = ({ data, sectionOrder = [] }) => {
+  const resumeRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const calculateScale = () => {
+      if (!resumeRef.current) return;
+
+      // A4 height at 96 DPI
+      const A4_HEIGHT_PX = 1122.52;
+
+      const contentHeight = resumeRef.current.scrollHeight;
+
+      if (contentHeight <= A4_HEIGHT_PX) {
+        setScale(1);
+        return;
+      }
+
+      // Small safety margin so Puppeteer doesn't create page 2
+      const availableHeight = A4_HEIGHT_PX - 8;
+
+      const calculatedScale = availableHeight / contentHeight;
+
+      // Don't scale above 1
+      setScale(Math.min(1, calculatedScale));
+    };
+
+    // Wait until fonts/images/layout are rendered
+    const timer = setTimeout(calculateScale, 100);
+
+    window.addEventListener("resize", calculateScale);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", calculateScale);
+    };
+  }, [data, sectionOrder]);
+
   const accent = data?.accent_color || "#283593";
 
   const formatUrl = (url) => {
     if (!url) return "";
+
     return /^https?:\/\//i.test(url) ? url : `https://${url}`;
   };
 
@@ -22,13 +56,10 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
 
     if (/^\d{4}-\d{2}$/.test(dateStr)) {
       const [year, month] = dateStr.split("-");
-      return new Date(Number(year), Number(month) - 1).toLocaleString(
-        "en-US",
-        {
-          month: "short",
-          year: "numeric",
-        }
-      );
+      return new Date(Number(year), Number(month) - 1).toLocaleString("en-US", {
+        month: "short",
+        year: "numeric",
+      });
     }
 
     return dateStr;
@@ -55,7 +86,7 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
       .filter(Boolean);
 
     return (
-      <ul className="mt-[2px] ml-4 list-disc space-y-[2px]">
+      <ul className="mt-[1px] ml-4 list-disc space-y-0">
         {bullets.map((bullet, index) => (
           <li key={index} className="pl-[1px]">
             {bullet.replace(/^[-•*]\s*/, "")}
@@ -66,9 +97,9 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
   };
 
   const SectionTitle = ({ children }) => (
-    <div className="mb-[4px] mt-[5px]">
+    <div className="mb-[3px] mt-[3px]">
       <h2
-        className="font-serif text-[14px] font-semibold uppercase tracking-[0.04em]"
+        className="font-serif text-[13px] font-semibold uppercase tracking-[0.04em]"
         style={{ color: accent }}
       >
         {children}
@@ -79,6 +110,24 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
       />
     </div>
   );
+
+  const profileLinks = [
+    {
+      key: "linkedin",
+      label: "LinkedIn",
+      icon: FaLinkedin,
+    },
+    {
+      key: "github",
+      label: "GitHub",
+      icon: FaGithub,
+    },
+    {
+      key: "portfolio",
+      label: "Portfolio",
+      icon: Globe,
+    },
+  ];
 
   /* =========================
      EDUCATION
@@ -108,7 +157,7 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
                 >
                   {heading}
                 </div>
-              )
+              ),
             )}
 
             {data.education.map((edu, index) => {
@@ -186,7 +235,7 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
       <section>
         <SectionTitle>Work Experience</SectionTitle>
 
-        <div className="space-y-[7px]">
+        <div className="space-y-[4px]">
           {data.experience.map((exp, index) => (
             <article key={index} className="break-inside-avoid">
               <div className="flex items-start justify-between gap-3">
@@ -245,7 +294,10 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
           </div>
 
           {project.type && (
-            <div className="font-semibold leading-[1.15]" style={{ color: accent }}>
+            <div
+              className="font-semibold leading-[1.15]"
+              style={{ color: accent }}
+            >
               {project.type}
             </div>
           )}
@@ -296,7 +348,7 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
       <section>
         {showTitle && <SectionTitle>Key Projects</SectionTitle>}
 
-        <div className="space-y-[7px]">
+        <div className="space-y-[4px]">
           {projects.map((project, index) => (
             <ProjectCard key={index} project={project} />
           ))}
@@ -354,9 +406,7 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
                 </div>
 
                 {cert.issue_date && (
-                  <span className="whitespace-nowrap">
-                    {cert.issue_date}
-                  </span>
+                  <span className="whitespace-nowrap">{cert.issue_date}</span>
                 )}
               </div>
 
@@ -405,48 +455,157 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
   const leftProjects = projects.slice(0, projectSplit);
   const rightProjects = projects.slice(projectSplit);
 
+  const printStyles = `
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  @media print {
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 210mm !important;
+      height: 297mm !important;
+    }
+
+    .elite-resume-page {
+      width: 210mm !important;
+      height: 297mm !important;
+      min-height: 297mm !important;
+      max-height: 297mm !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+  }
+`;
+
   return (
-    <div
-      className="
-        mx-auto
-        min-h-[297mm]
-        w-[210mm]
-        bg-white
-        px-[14mm]
-        py-[9mm]
-        text-black
-      "
-      style={{
-        fontFamily: '"Times New Roman", Times, serif',
-        fontSize: `${data?.font_size || 10.5}px`,
-        lineHeight: data?.line_height || 1.18,
-      }}
-    >
-      {/* ================= HEADER ================= */}
+    <>
+      <style>
+        {`
+        @page {
+          size: A4;
+          margin: 0;
+        }
 
-      <header className="mb-[7px]">
-  <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
+        html,
+        body {
+          margin: 0 !important;
+          padding: 0 !important;
+          background: white !important;
+        }
 
-    {/* LEFT - Profile Image */}
-    <div className="flex justify-start">
-      {data?.personal_info?.image && (
-        <img
-          src={data.personal_info.image}
-          alt=""
-          className="
+        * {
+          box-sizing: border-box;
+        }
+
+        .elite-page {
+          width: 210mm;
+          height: 297mm;
+          overflow: hidden;
+          background: white;
+        }
+
+        .elite-resume {
+          width: 210mm;
+          background: white;
+        }
+
+        .break-inside-avoid {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        @media print {
+          html,
+          body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background: white !important;
+          }
+
+          .elite-page {
+            width: 210mm;
+            height: 297mm;
+            overflow: hidden;
+            margin: 0 !important;
+          }
+
+          *,
+          *::before,
+          *::after {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+      `}
+      </style>
+
+      <div
+        className="elite-page"
+        style={{
+          width: "210mm",
+          height: "297mm",
+          overflow: "hidden",
+          background: "#fff",
+          margin: "0 auto",
+          position: "relative",
+        }}
+      >
+        <div
+          ref={resumeRef}
+          className="elite-resume"
+          style={{
+            width: "210mm",
+            background: "#fff",
+            padding: "5mm 5mm",
+            color: "#000",
+            fontFamily: '"Times New Roman", Times, serif',
+            fontSize: `${data?.font_size || 10.5}px`,
+            lineHeight: data?.line_height || 1.12,
+
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+
+            // Prevent scaled content from affecting page layout
+            height: `${297 / scale}mm`,
+          }}
+        >
+          {/* ================= HEADER ================= */}
+
+          <header className="mb-[4px]">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
+              {/* LEFT - Profile Image */}
+              <div className="flex justify-start">
+                {data?.personal_info?.image && (
+                  <img
+                    src={data.personal_info.image}
+                    alt=""
+                    className="
             h-[58px] w-[58px]
             rounded-full
             object-cover
           "
-        />
-      )}
-    </div>
+                  />
+                )}
+              </div>
 
-    {/* CENTER - Name + Profession */}
-    <div className="text-center pt-[2px]">
-      {data?.personal_info?.full_name && (
-        <h1
-          className="
+              {/* CENTER - Name + Profession */}
+              <div className="text-center pt-[2px]">
+                {data?.personal_info?.full_name && (
+                  <h1
+                    className="
             font-serif
             text-[26px]
             font-medium
@@ -455,193 +614,135 @@ const EliteTemplate = ({ data, sectionOrder = [] }) => {
             leading-none
             whitespace-nowrap
           "
-          style={{ color: accent }}
-        >
-          {data.personal_info.full_name}
-        </h1>
-      )}
+                    style={{ color: accent }}
+                  >
+                    {data.personal_info.full_name}
+                  </h1>
+                )}
 
-      {data?.personal_info?.profession && (
-        <div className="mt-[5px] text-[20px]">
-          {data.personal_info.profession}
-        </div>
-      )}
-    </div>
-
-    {/* RIGHT - Contact + Profiles */}
-    <div
-      className="flex flex-col items-end justify-start gap-[2px] text-[9.5px] leading-[1.15] min-w-0 ">
-        {data?.personal_info?.email && (
-            <a
-            href={`mailto:${data.personal_info.email}`}
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>{data.personal_info.email}</span>
-            <Mail size={9} />
-            </a>
-        )}
-
-        {data?.personal_info?.phone && (
-            <a
-            href={`tel:${data.personal_info.phone}`}
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>{data.personal_info.phone}</span>
-            <Phone size={9} />
-            </a>
-        )}
-
-        {data?.personal_info?.location && (
-            <span className="flex items-center gap-1 whitespace-nowrap">
-            <span>{data.personal_info.location}</span>
-            <MapPin size={9} />
-            </span>
-        )}
-
-        {data?.personal_info?.linkedin && (
-            <a
-            href={formatUrl(data.personal_info.linkedin)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>LinkedIn</span>
-            <FaLinkedin size={9} />
-            </a>
-        )}
-
-        {data?.personal_info?.github && (
-            <a
-            href={formatUrl(data.personal_info.github)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>GitHub</span>
-            <FaGithub size={9} />
-            </a>
-        )}
-
-        {data?.personal_info?.portfolio && (
-            <a
-            href={formatUrl(data.personal_info.portfolio)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>Portfolio</span>
-            <Globe size={9} />
-            </a>
-        )}
-
-        {data?.personal_info?.leetcode && (
-            <a
-            href={formatUrl(data.personal_info.leetcode)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>LeetCode</span>
-            <Code2 size={9} />
-            </a>
-        )}
-
-        {data?.personal_info?.codeforces && (
-            <a
-            href={formatUrl(data.personal_info.codeforces)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>Codeforces</span>
-            <Code2 size={9} />
-            </a>
-         )}
-
-        {data?.personal_info?.codechef && (
-        <a
-          href={formatUrl(data.personal_info.codechef)}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-1 whitespace-nowrap"
-        >
-          <span>CodeChef</span>
-          <Code2 size={9} />
-        </a>
-        )}
-
-        {data?.personal_info?.geeksforgeeks && (
-            <a
-            href={formatUrl(data.personal_info.geeksforgeeks)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>GeeksForGeeks</span>
-            <Code2 size={9} />
-            </a>
-         )}
-
-        {data?.personal_info?.atcoder && (
-            <a
-            href={formatUrl(data.personal_info.atcoder)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 whitespace-nowrap"
-            >
-            <span>AtCoder</span>
-          < Code2 size={9} />
-            </a>
-            )}
-        </div>
-
-        </div>
-    </header>
-
-      {/* ================= FULL WIDTH ================= */}
-
-      <main>
-        {enabled.has("education") && renderEducation()}
-        {enabled.has("achievements") && renderAchievements()}
-
-        {showSummary && data?.professional_summary?.trim() && (
-          <section>
-            <SectionTitle>Professional Summary</SectionTitle>
-            <p className="text-justify">{data.professional_summary}</p>
-          </section>
-        )}
-
-        {/* ================= TWO COLUMNS ================= */}
-
-        <div className="mt-[2px] grid grid-cols-[1fr_1fr] items-start gap-x-[13px]">
-          {/* LEFT COLUMN */}
-          <div className="min-w-0">
-            {showExperience && renderExperience()}
-
-            {showProjects && leftProjects.length > 0 && (
-              <div className={showExperience ? "mt-[3px]" : ""}>
-                {renderProjects(leftProjects)}
+                {data?.personal_info?.profession && (
+                  <div className="mt-[5px] text-[20px]">
+                    {data.personal_info.profession}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="min-w-0">
-            {showProjects && rightProjects.length > 0 && (
-              <div>{renderProjects(rightProjects)}</div>
+              {/* RIGHT - Contact + Profiles */}
+              <div className="flex flex-col items-end justify-start gap-[2px] text-[9.5px] leading-[1.15] min-w-0 ">
+                {data?.personal_info?.email && (
+                  <a
+                    href={`mailto:${data.personal_info.email}`}
+                    className="flex items-center gap-1 whitespace-nowrap"
+                  >
+                    <span>{data.personal_info.email}</span>
+                    <Mail size={9} />
+                  </a>
+                )}
+
+                {data?.personal_info?.phone && (
+                  <a
+                    href={`tel:${data.personal_info.phone}`}
+                    className="flex items-center gap-1 whitespace-nowrap"
+                  >
+                    <span>{data.personal_info.phone}</span>
+                    <Phone size={9} />
+                  </a>
+                )}
+
+                {data?.personal_info?.location && (
+                  <span className="flex items-center gap-1 whitespace-nowrap">
+                    <span>{data.personal_info.location}</span>
+                    <MapPin size={9} />
+                  </span>
+                )}
+
+                {/* Fixed Professional Profiles */}
+                {profileLinks.map((profile) => {
+                  const url = data?.personal_info?.[profile.key];
+
+                  if (!url) return null;
+
+                  const Icon = profile.icon;
+
+                  return (
+                    <a
+                      key={profile.key}
+                      href={formatUrl(url)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 whitespace-nowrap"
+                    >
+                      <span>{profile.label}</span>
+                      <Icon size={9} />
+                    </a>
+                  );
+                })}
+
+                {/* Custom Professional Profiles */}
+                {data?.personal_info?.custom_profiles?.map((profile, index) => {
+                  if (!profile?.name || !profile?.url) return null;
+
+                  return (
+                    <a
+                      key={`custom-profile-${index}`}
+                      href={formatUrl(profile.url)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 whitespace-nowrap"
+                    >
+                      <span>{profile.name}</span>
+                      <Globe size={9} />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </header>
+
+          {/* ================= FULL WIDTH ================= */}
+
+          <main>
+            {enabled.has("education") && renderEducation()}
+            {enabled.has("achievements") && renderAchievements()}
+
+            {showSummary && data?.professional_summary?.trim() && (
+              <section>
+                <SectionTitle>Professional Summary</SectionTitle>
+                <p className="text-justify">{data.professional_summary}</p>
+              </section>
             )}
 
-            {showSkills && (
-              <div className="mt-[3px]">{renderSkills()}</div>
-            )}
+            {/* ================= TWO COLUMNS ================= */}
 
-            {showCertifications && (
-              <div className="mt-[3px]">{renderCertifications()}</div>
-            )}
-          </div>
+            <div className="mt-[1px] grid grid-cols-[1fr_1fr] items-start gap-x-[10px]">
+              {/* LEFT COLUMN */}
+              <div className="min-w-0">
+                {showExperience && renderExperience()}
+
+                {showProjects && leftProjects.length > 0 && (
+                  <div className={showExperience ? "mt-[3px]" : ""}>
+                    {renderProjects(leftProjects)}
+                  </div>
+                )}
+              </div>
+
+              {/* RIGHT COLUMN */}
+              <div className="min-w-0">
+                {showProjects && rightProjects.length > 0 && (
+                  <div>{renderProjects(rightProjects)}</div>
+                )}
+
+                {showSkills && <div className="mt-[3px]">{renderSkills()}</div>}
+
+                {showCertifications && (
+                  <div className="mt-[3px]">{renderCertifications()}</div>
+                )}
+              </div>
+            </div>
+          </main>
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 };
 
