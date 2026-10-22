@@ -47,33 +47,39 @@ cd AI-Resume-Analyzer
 ## Configure Environment Variables
 
 ### Frontend (client/.env):
+```bash
 VITE_BASE_URL=http://localhost:5000
+```
 
 ### Backend (server/.env):
-PORT= Port_Number
-MONGODB_URL=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-FRONTEND_URL=http://localhost:5173
-OPENAI_API_KEY=your_api_key
-OPENAI_BASE_URL=[https://api.openai.com/v1](https://api.openai.com/v1)
-OPENAI_MODEL=gpt-4o-mini
-IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
-IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
-IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
+```bash
+PORT =  Port_Number
+MONGODB_URL = your_mongodb_connection_string
+JWT_SECRET = your_jwt_secret_key
+FRONTEND_URL = http://localhost:5173
+OPENAI_API_KEY = your_api_key
+OPENAI_BASE_URL = [https://api.openai.com/v1](https://api.openai.com/v1)
+OPENAI_MODEL = gpt-4o-mini
+IMAGEKIT_PUBLIC_KEY = your_imagekit_public_key
+IMAGEKIT_PRIVATE_KEY = your_imagekit_private_key
+IMAGEKIT_URL_ENDPOINT = your_imagekit_url_endpoint
+```
 
 ## Install & Run
 
 ### Backend Server:
-
+``` bash
 cd server
 npm install
 npm run dev
+```
 
 ### Frontend Client
-
+``` bash
 cd ../client
 npm install
 npm run dev
+```
 
 ## 👨‍💻 Author
 
