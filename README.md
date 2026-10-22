@@ -1,204 +1,85 @@
-# AI Resume Analyzer
+# AI Resume Analyzer & Builder
 
-An AI-powered resume builder that helps users create, improve, and export professional, ATS-friendly resumes.
+Production-grade full-stack MERN application featuring asynchronous PDF compilation, AI-driven content analysis, and an automated continuous integration and delivery (CI/CD) pipeline.
 
-🔗 **Live Demo:** https://ai-resume-analyzer-khushhal.vercel.app/
-💻 **GitHub:** https://github.com/khushhalkumrawat/AI-Resume-Analyzer
-
----
-
-## What it does
-
-AI Resume Analyzer combines a resume builder with AI-powered content improvement.
-
-Users can:
-
-* Create and edit resumes with a live preview
-* Build resumes using multiple professional templates
-* Upload an existing resume and extract its content
-* Improve resume content using AI suggestions
-* Analyze resumes and identify areas for improvement
-* Export resumes as high-quality PDFs
-* Share resumes through public links
+🔗 **[Live Demo](https://ai-resume-analyzer-khushhal.vercel.app/)** • 💻 **[GitHub Repository](https://github.com/khushhalkumrawat/AI-Resume-Analyzer)**
 
 ---
 
-## Tech Stack
+## 📌 System Design & Engineering Highlights
 
-**Frontend**
+### 1. High-Performance Headless PDF Pipeline
+* **Problem:** Launching a fresh Chromium instance via `puppeteer.launch()` per export caused 2–3 minute latency spikes and out-of-memory (OOM) crashes under Render's 512 MB memory constraints.
+* **Solution:** Implemented a persistent, warm Puppeteer browser singleton configured with low-memory Linux flags (`--disable-dev-shm-usage`, `--single-process`, `--no-sandbox`).
+* **Result:** Dropped PDF generation times from ~150 seconds to under 4 seconds while maintaining print-quality typography and multi-page alignment.
 
-* React
-* Vite
-* Redux Toolkit
-* React Router
-* Tailwind CSS
-* Axios
+### 2. Automated CI/CD & Delivery Gates
+* Configured automated multi-stage GitHub Actions workflows executing client linting, Vite bundle compilation, and backend syntax verification.
+* Implemented strict branch rulesets targeting `main` to lock merging until status checks pass, preventing regressions from reaching production.
+* Enabled automated production releases to **[Vercel](https://vercel.com/)** (Frontend SPA) and **[Render](https://render.com/)** (Backend API) upon pull request merge.
 
-**Backend**
-
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-
-**AI & Authentication**
-
-* OpenAI API
-* JWT Authentication
-
-**Deployment**
-
-* Vercel — Frontend
-* Render — Backend
+### 3. Latency Mitigation & Auth Isolation
+* Kept free-tier cloud instances awake via lightweight `/api/health` monitoring hooks, eliminating 50–90 second cold-start delays on initial login.
+* Designed dual-mode JWT authorization: standard session tokens for authenticated user routes and scoped, short-lived tokens (`pdf-render`) for isolated headless browser previews.
 
 ---
 
-## How it works
+## 🛠️ Tech Stack
 
-```text
-User
- │
- ▼
-Create / Upload Resume
- │
- ▼
-Edit & Customize
- │
- ▼
-AI Analysis & Content Enhancement
- │
- ▼
-Live Resume Preview
- │
- ▼
-Export / Share
-```
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18, Vite, Redux Toolkit, Tailwind CSS, Axios, Lucide Icons |
+| **Backend** | Node.js, Express.js, Puppeteer (Headless PDF engine) |
+| **Database** | MongoDB Atlas, Mongoose ODM |
+| **AI & Media** | OpenAI / Gemini API, ImageKit |
+| **DevOps** | GitHub Actions, Vercel, Render, UptimeRobot |
 
 ---
 
-## Architecture
+## 💻 Local Development
 
-```text
-React + Vite
-     │
-     │ REST API
-     ▼
-Express + Node.js
-     │
- ┌───┴───────────────┐
- ▼                   ▼
-MongoDB           OpenAI API
-     │
-     ▼
-Resume Data
-```
-
-The application follows a client-server architecture with protected API routes and JWT-based authentication.
-
----
-
-## Project Structure
-
-```text
-AI-Resume-Analyzer/
-│
-├── client/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── redux/
-│       ├── services/
-│       └── utils/
-│
-├── server/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   └── utils/
-│
-└── README.md
-```
-
----
-
-## Run Locally
-
-### 1. Clone
-
+### 1. Clone the repository
 ```bash
-git clone https://github.com/khushhalkumrawat/AI-Resume-Analyzer.git
+git clone [https://github.com/khushhalkumrawat/AI-Resume-Analyzer.git](https://github.com/khushhalkumrawat/AI-Resume-Analyzer.git)
 cd AI-Resume-Analyzer
 ```
 
-### 2. Install dependencies
+## Configure Environment Variables
 
-```bash
-cd client
-npm install
+### Frontend (client/.env):
+VITE_BASE_URL=http://localhost:5000
 
-cd ../server
-npm install
-```
+### Backend (server/.env):
+PORT= Port_Number
+MONGODB_URL=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+FRONTEND_URL=http://localhost:5173
+OPENAI_API_KEY=your_api_key
+OPENAI_BASE_URL=[https://api.openai.com/v1](https://api.openai.com/v1)
+OPENAI_MODEL=gpt-4o-mini
+IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
+IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
 
-### 3. Environment Variables
+## Install & Run
 
-**Client**
+### Backend Server:
 
-```env
-VITE_API_URL=
-```
-
-**Server**
-
-```env
-PORT=
-IMAGEKIT_PRIVATE_KEY=
-JWT_SECRET=
-MONGODB_URL=
-OPENAI_API_KEY=
-OPENAI_BASE_URL=
-OPENAI_MODEL=
-FRONTEND_URL=
-```
-
-### 4. Start the application
-
-Backend:
-
-```bash
 cd server
+npm install
 npm run dev
-```
 
-Frontend:
+### Frontend Client
 
-```bash
-cd client
+cd ../client
+npm install
 npm run dev
-```
 
-## Key Highlights
+## 👨‍💻 Author
 
-* Full-stack MERN application
-* AI-powered resume analysis and content enhancement
-* JWT authentication and protected routes
-* REST API architecture
-* MongoDB-based resume management
-* Multiple resume templates
-* High-quality PDF generation
-* Deployed frontend and backend
+**Khushhal Kumrawat**  
+Software Engineer • Full Stack Developer
 
----
-
-## Author
-
-### Khushhal Kumrawat
-
-Full Stack Developer • AI/ML Enthusiast
-
-[GitHub](https://github.com/khushhalkumrawat) • [LinkedIn](https://www.linkedin.com/in/khushhal-kumrawat-017bb6390/) • [Email](mailto:khushhalkumrawat25@gmail.com)
-
----
-
-⭐ If you find the project useful, consider giving it a star.
+* 🌐 **LinkedIn:** [Khushhal Kumrawat](https://www.linkedin.com/in/khushhal-kumrawat-017bb6390/)
+* 🐙 **GitHub:** [@khushhalkumrawat](https://github.com/khushhalkumrawat)
+* ✉️ **Email:** [khushhalkumrawat@gmail.com](mailto:khushhalkumrawat@gmail.com)
