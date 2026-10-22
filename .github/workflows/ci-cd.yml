@@ -80,28 +80,10 @@ jobs:
     needs: [lint-and-build-client, verify-server]
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./client
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: client/package-lock.json
-
-      - name: Install Client Dependencies
-        run: npm ci
-
-      - name: Build Frontend
-        run: npm run build
-        env:
-          VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
