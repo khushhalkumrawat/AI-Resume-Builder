@@ -1,5 +1,5 @@
 import React from "react";
-import { Phone, Mail, MapPin, Globe, Code2, ExternalLink } from "lucide-react";
+import { Phone, Mail, MapPin, Globe, ExternalLink } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useRef } from "react";
 import { useEffect } from "react";
